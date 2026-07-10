@@ -6,69 +6,74 @@
   <title>The Madams' Merch Drop - Madams of WilBea</title>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #E8F5E9; color: #1F4128; }
+    body { font-family: 'Poppins', 'Segoe UI', sans-serif; background: linear-gradient(135deg, #2E5D3A 0%, #1F4128 100%); color: #333; min-height: 100vh; }
     .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
-    .header { text-align: center; margin-bottom: 30px; padding: 30px 0; background: white; border-radius: 12px; }
-    .header h1 { font-size: 28px; margin-bottom: 10px; color: #2E5D3A; }
-    .header p { color: #666; font-size: 14px; }
-    .category-toggle { display: flex; gap: 12px; justify-content: center; margin-top: 20px; }
-    .cat-btn { padding: 10px 20px; border: 1px solid #2E5D3A; background: white; color: #2E5D3A; border-radius: 6px; cursor: pointer; font-weight: 500; transition: all 0.2s; }
-    .cat-btn.active { background: #2E5D3A; color: white; }
-    .main-content { display: grid; grid-template-columns: 1fr 320px; gap: 30px; }
-    .products-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 16px; }
-    .product-card { background: white; border: 1px solid #ddd; border-radius: 8px; padding: 16px; }
-    .product-type { font-size: 11px; text-transform: uppercase; color: #999; letter-spacing: 0.5px; margin-bottom: 8px; }
-    .product-name { font-size: 15px; font-weight: 500; color: #1F4128; margin-bottom: 8px; }
-    .product-price { font-size: 16px; font-weight: 600; color: #2E5D3A; margin-bottom: 12px; }
+    .header { text-align: center; margin-bottom: 30px; padding: 40px 20px; background: linear-gradient(135deg, #2E5D3A 0%, #1F4128 100%); border-radius: 16px; box-shadow: 0 8px 32px rgba(0,0,0,0.15); color: white; }
+    .header h1 { font-size: 36px; margin-bottom: 8px; color: white; font-weight: 800; letter-spacing: -1px; }
+    .header p { color: rgba(255,255,255,0.95); font-size: 16px; font-weight: 500; }
+    .category-toggle { display: flex; gap: 12px; justify-content: center; margin-top: 25px; flex-wrap: wrap; }
+    .cat-btn { padding: 12px 28px; border: 2px solid white; background: transparent; color: white; border-radius: 50px; cursor: pointer; font-weight: 700; transition: all 0.3s; font-size: 15px; }
+    .cat-btn.active { background: white; color: #2E5D3A; }
+    .cat-btn:hover { transform: translateY(-2px); }
+    .main-content { display: grid; grid-template-columns: 1fr 340px; gap: 30px; }
+    .products-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 20px; }
+    .product-card { background: white; border: none; border-radius: 16px; padding: 20px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); transition: all 0.3s; }
+    .product-card:hover { transform: translateY(-8px); box-shadow: 0 12px 40px rgba(46, 93, 58, 0.2); }
+    .product-type { font-size: 12px; text-transform: uppercase; color: #2E5D3A; letter-spacing: 0.5px; margin-bottom: 8px; font-weight: 700; }
+    .product-name { font-size: 16px; font-weight: 700; color: #333; margin-bottom: 8px; }
+    .product-price { font-size: 20px; font-weight: 800; color: #2E5D3A; margin-bottom: 12px; }
     .size-group { margin-bottom: 12px; }
-    .size-label { font-size: 12px; color: #666; margin-bottom: 4px; display: block; }
-    .size-group select, .qty-input { width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px; font-size: 13px; margin-bottom: 8px; }
-    .qty-control { display: flex; gap: 8px; align-items: center; margin-bottom: 12px; }
-    .qty-btn { width: 32px; height: 32px; border: 1px solid #ddd; background: #f5f5f5; cursor: pointer; border-radius: 4px; font-weight: 600; color: #2E5D3A; }
-    .qty-btn:hover { background: #E8F5E9; }
-    .qty-display { flex: 1; text-align: center; font-size: 14px; font-weight: 500; }
-    .add-btn { width: 100%; padding: 10px; background: #2E5D3A; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: 500; }
-    .add-btn:hover { background: #1f4128; }
-    .cart-card { background: white; border: 1px solid #ddd; border-radius: 8px; padding: 16px; position: sticky; top: 20px; }
-    .cart-title { font-size: 16px; font-weight: 600; color: #2E5D3A; margin-bottom: 12px; }
-    .cart-items { max-height: 300px; overflow-y: auto; margin-bottom: 12px; }
-    .cart-item { padding: 8px 0; border-bottom: 1px solid #eee; font-size: 13px; }
+    .size-label { font-size: 12px; color: #2E5D3A; margin-bottom: 6px; display: block; font-weight: 700; }
+    .size-group select, .qty-input { width: 100%; padding: 10px; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 13px; margin-bottom: 8px; font-weight: 500; transition: all 0.3s; }
+    .size-group select:focus, .qty-input:focus { border-color: #2E5D3A; outline: none; }
+    .qty-control { display: flex; gap: 10px; align-items: center; margin-bottom: 14px; }
+    .qty-btn { width: 36px; height: 36px; border: 2px solid #2E5D3A; background: white; cursor: pointer; border-radius: 8px; font-weight: 700; color: #2E5D3A; transition: all 0.3s; font-size: 16px; }
+    .qty-btn:hover { background: #2E5D3A; color: white; }
+    .qty-display { flex: 1; text-align: center; font-size: 15px; font-weight: 700; }
+    .add-btn { width: 100%; padding: 12px; background: linear-gradient(135deg, #2E5D3A 0%, #1F4128 100%); color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 700; transition: all 0.3s; font-size: 14px; }
+    .add-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 16px rgba(46, 93, 58, 0.3); }
+    .cart-card { background: white; border: none; border-radius: 16px; padding: 24px; position: sticky; top: 20px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); }
+    .cart-title { font-size: 18px; font-weight: 800; color: #2E5D3A; margin-bottom: 16px; }
+    .cart-items { max-height: 300px; overflow-y: auto; margin-bottom: 16px; }
+    .cart-item { padding: 12px 0; border-bottom: 1px solid #f0f0f0; font-size: 13px; }
     .cart-item:last-child { border-bottom: none; }
-    .cart-item-name { font-weight: 500; color: #1F4128; }
-    .cart-item-detail { color: #999; font-size: 12px; margin-top: 2px; }
-    .cart-total { background: #E8F5E9; padding: 12px; border-radius: 4px; margin-bottom: 12px; }
-    .cart-total-label { font-size: 12px; color: #1f4128; }
-    .cart-total-amount { font-size: 20px; font-weight: 600; color: #2E5D3A; margin-top: 4px; }
+    .cart-item-name { font-weight: 700; color: #333; }
+    .cart-item-detail { color: #999; font-size: 12px; margin-top: 4px; }
+    .cart-total { background: linear-gradient(135deg, #2E5D3A 0%, #1F4128 100%); padding: 16px; border-radius: 12px; margin-bottom: 12px; color: white; }
+    .cart-total-label { font-size: 12px; color: rgba(255,255,255,0.9); font-weight: 600; }
+    .cart-total-amount { font-size: 24px; font-weight: 800; color: white; margin-top: 6px; }
     .discount-section { margin-bottom: 16px; }
-    .discount-input { width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px; font-size: 12px; margin-bottom: 8px; }
-    .discount-btn { width: 100%; padding: 8px; background: #B8D4B8; color: #1f4128; border: none; border-radius: 4px; cursor: pointer; font-weight: 500; font-size: 12px; }
-    .discount-btn:hover { background: #9ac39a; }
-    .discount-msg { font-size: 12px; margin-top: 8px; padding: 8px; border-radius: 4px; text-align: center; }
-    .discount-success { background: #E8F5E9; color: #2E5D3A; }
+    .discount-input { width: 100%; padding: 12px; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 13px; margin-bottom: 8px; font-weight: 500; transition: all 0.3s; }
+    .discount-input:focus { border-color: #2E5D3A; outline: none; }
+    .discount-btn { width: 100%; padding: 11px; background: #2E5D3A; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 700; font-size: 13px; transition: all 0.3s; }
+    .discount-btn:hover { background: #1F4128; transform: translateY(-2px); }
+    .discount-msg { font-size: 12px; margin-top: 8px; padding: 10px; border-radius: 8px; text-align: center; font-weight: 600; }
+    .discount-success { background: #e8f5e9; color: #2e7d32; }
     .discount-error { background: #ffebee; color: #c62828; }
-    .checkout-btn { width: 100%; padding: 12px; background: #2E5D3A; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: 500; margin-bottom: 8px; }
-    .checkout-btn:hover { background: #1f4128; }
+    .checkout-btn { width: 100%; padding: 14px; background: linear-gradient(135deg, #2E5D3A 0%, #1F4128 100%); color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 700; margin-bottom: 8px; transition: all 0.3s; font-size: 15px; }
+    .checkout-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(46, 93, 58, 0.3); }
     .checkout-btn:disabled { background: #ccc; cursor: not-allowed; }
-    .checkout-modal { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 1000; overflow-y: auto; }
+    .checkout-modal { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.6); z-index: 1000; overflow-y: auto; backdrop-filter: blur(2px); }
     .checkout-modal.show { display: block; }
-    .checkout-content { background: white; margin: 20px auto; padding: 30px; max-width: 700px; border-radius: 8px; }
-    .checkout-close { float: right; cursor: pointer; font-size: 24px; color: #999; background: none; border: none; }
-    .checkout-h2 { font-size: 20px; font-weight: 600; color: #2E5D3A; margin: 0 0 20px 0; clear: both; }
-    .checkout-section { margin-bottom: 24px; }
-    .checkout-section-title { font-size: 14px; font-weight: 600; color: #1F4128; margin-bottom: 12px; }
-    .order-item { font-size: 13px; color: #1F4128; margin-bottom: 8px; padding: 8px; background: #f5f5f5; border-radius: 4px; }
-    .qr-section { text-align: center; margin-bottom: 20px; }
-    .qr-section select { width: 100%; padding: 10px; margin-bottom: 16px; border: 1px solid #ddd; border-radius: 4px; }
-    .qr-display { min-height: 200px; display: flex; align-items: center; justify-content: center; background: #E8F5E9; border-radius: 4px; margin-bottom: 12px; }
+    .checkout-content { background: white; margin: 20px auto; padding: 40px; max-width: 700px; border-radius: 20px; box-shadow: 0 20px 60px rgba(0,0,0,0.15); }
+    .checkout-close { float: right; cursor: pointer; font-size: 28px; color: #999; background: none; border: none; font-weight: 300; }
+    .checkout-h2 { font-size: 24px; font-weight: 800; color: #2E5D3A; margin: 0 0 24px 0; clear: both; }
+    .checkout-section { margin-bottom: 28px; }
+    .checkout-section-title { font-size: 15px; font-weight: 700; color: #333; margin-bottom: 14px; text-transform: uppercase; letter-spacing: 0.5px; }
+    .order-item { font-size: 14px; color: #333; margin-bottom: 10px; padding: 12px; background: linear-gradient(135deg, rgba(46, 93, 58, 0.05), rgba(31, 65, 40, 0.05)); border-left: 4px solid #2E5D3A; border-radius: 8px; font-weight: 500; }
+    .qr-section { text-align: center; margin-bottom: 24px; }
+    .qr-section select { width: 100%; padding: 12px; margin-bottom: 16px; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 14px; font-weight: 500; }
+    .qr-display { min-height: 240px; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, rgba(46, 93, 58, 0.1), rgba(31, 65, 40, 0.1)); border-radius: 12px; margin-bottom: 16px; border: 2px dashed #2E5D3A; }
     .qr-display img { max-width: 100%; max-height: 300px; }
-    .qr-label { font-size: 12px; color: #2E5D3A; font-weight: 600; margin-bottom: 8px; }
-    .shipping-section { background: #f5f5f5; padding: 12px; border-radius: 4px; margin-bottom: 16px; }
-    .shipping-field { margin-bottom: 12px; }
-    .shipping-field label { display: block; font-size: 12px; font-weight: 500; color: #1F4128; margin-bottom: 4px; }
-    .shipping-field input, .shipping-field select { width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px; font-size: 13px; }
-    .notes-area { min-height: 80px; }
-    .form-btn { width: 100%; padding: 12px; background: #2E5D3A; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: 500; font-size: 14px; }
-    .form-btn:hover { background: #1f4128; }
+    .qr-label { font-size: 13px; color: #2E5D3A; font-weight: 700; margin-bottom: 10px; }
+    .shipping-section { background: linear-gradient(135deg, rgba(46, 93, 58, 0.05), rgba(31, 65, 40, 0.05)); padding: 16px; border-radius: 12px; margin-bottom: 20px; border: 1px solid rgba(46, 93, 58, 0.2); }
+    .shipping-field { margin-bottom: 16px; }
+    .shipping-field label { display: block; font-size: 13px; font-weight: 700; color: #333; margin-bottom: 6px; }
+    .shipping-field input, .shipping-field select { width: 100%; padding: 12px; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 13px; font-weight: 500; transition: all 0.3s; }
+    .shipping-field input:focus, .shipping-field select:focus { border-color: #2E5D3A; outline: none; }
+    .notes-area { min-height: 100px; resize: vertical; }
+    .form-btn { width: 100%; padding: 14px; background: linear-gradient(135deg, #2E5D3A 0%, #1F4128 100%); color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 700; font-size: 15px; transition: all 0.3s; }
+    .form-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(46, 93, 58, 0.3); }
     .cart-empty { color: #999; font-size: 14px; }
     @media (max-width: 900px) { .main-content { grid-template-columns: 1fr; } .cart-card { position: static; } }
   </style>
@@ -76,11 +81,12 @@
 <body>
   <div class="container">
     <div class="header">
-      <h1>💎 The Madams' Merch Drop</h1>
-      <p>For the trentahin-and-above WilBea fam</p>
+      <h1>👑 Cart It Up, Fam! 🛒</h1>
+      <p style="font-size: 18px; margin-bottom: 20px;">✨ The Madams' Merch Drop — Kilig Has No Age ✨</p>
+      <p>For the trentahin-and-beyond WilBea FANMILY</p>
       <div class="category-toggle">
-        <button class="cat-btn active" data-category="batch1">🛍️ Batch 1 Merch</button>
-        <button class="cat-btn" data-category="wr10">🎸 WR10 Concert Edition</button>
+        <button class="cat-btn active" data-category="batch1">👕 Batch 1 Solo Picks</button>
+        <button class="cat-btn" data-category="wr10">🎸 WR10 Concert 🔥</button>
       </div>
     </div>
 
@@ -88,9 +94,9 @@
       <div class="products-grid" id="productsGrid"></div>
 
       <div class="cart-card">
-        <div class="cart-title">Your Cart 💚</div>
+        <div class="cart-title">🛒 Your Haul</div>
         <div id="cartItems" class="cart-items">
-          <div class="cart-empty">Your cart is empty</div>
+          <div class="cart-empty">Start adding goodies, Madam! 💚</div>
         </div>
 
         <div class="discount-section">
@@ -112,7 +118,7 @@
           <div class="cart-total-amount" id="totalPrice">₱0</div>
         </div>
 
-        <button class="checkout-btn" id="checkoutBtn" onclick="goToCheckout()" disabled>Proceed to Checkout</button>
+        <button class="checkout-btn" id="checkoutBtn" onclick="goToCheckout()" disabled>👑 Crown Your Order!</button>
       </div>
     </div>
   </div>
