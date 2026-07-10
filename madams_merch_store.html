@@ -72,7 +72,7 @@
 
     /* ---------- Layout ---------- */
     .main-content { display: grid; grid-template-columns: 1fr 350px; gap: 30px; }
-    .products-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 22px; }
+    .products-grid { display: flex; flex-direction: column; gap: 18px; }
     .product-section { margin-bottom: 38px; }
     .section-header { margin-bottom: 18px; }
     .section-title {
@@ -88,11 +88,14 @@
       background: linear-gradient(180deg, var(--ivory) 0%, #ffffff 100%);
       border: 1px solid rgba(198,161,91,0.28);
       border-radius: 18px;
-      padding: 18px 18px 20px;
+      padding: 20px 22px;
       box-shadow: 0 8px 24px rgba(15,40,24,0.16);
       transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
       position: relative;
       overflow: hidden;
+      display: flex;
+      gap: 22px;
+      align-items: flex-start;
     }
     .product-card::before {
       content: "";
@@ -101,14 +104,17 @@
       opacity: 0.85;
     }
     .product-card:hover {
-      transform: translateY(-8px);
-      box-shadow: 0 18px 44px rgba(46,93,58,0.28);
+      transform: translateY(-4px);
+      box-shadow: 0 16px 40px rgba(46,93,58,0.24);
       border-color: var(--gold);
     }
-    .product-card img {
+    .product-img {
+      width: 150px; height: 150px; flex-shrink: 0;
+      object-fit: cover; border-radius: 12px;
       border: 1px solid rgba(198,161,91,0.25);
       background: var(--ivory-warm);
     }
+    .product-info { flex: 1; min-width: 0; }
     .product-type {
       font-size: 11px; text-transform: uppercase; color: var(--gold-deep);
       letter-spacing: 1.5px; margin-bottom: 6px; font-weight: 700;
@@ -118,15 +124,25 @@
       font-size: 17px; font-weight: 600; color: var(--ink); margin-bottom: 8px; line-height: 1.25;
     }
     .product-price { font-size: 22px; font-weight: 700; color: var(--forest); margin-bottom: 14px; letter-spacing: -0.5px; }
-    .size-group { margin-bottom: 10px; }
-    .size-label { font-size: 12px; color: var(--forest); margin-bottom: 6px; display: block; font-weight: 700; }
-    .size-group select, .qty-input, .qty-for-size {
-      width: 100%; padding: 10px; border: 1.5px solid #E7DFCB; border-radius: 9px;
-      font-family: 'Poppins', sans-serif; font-size: 13px; margin-bottom: 8px; font-weight: 500;
-      background: #fff; transition: all 0.25s; color: var(--ink);
+    .size-hint { font-size: 12px; color: var(--ink-soft); margin-bottom: 8px; font-weight: 600; }
+    .size-row { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 14px; }
+    .size-group { margin-bottom: 0; text-align: center; }
+    .size-label { font-size: 12px; color: var(--forest); margin-bottom: 5px; display: block; font-weight: 700; }
+    .size-group .qty-for-size {
+      width: 62px; padding: 9px 4px; text-align: center; margin-bottom: 0;
+      border: 1.5px solid #E7DFCB; border-radius: 9px; font-family: 'Poppins', sans-serif;
+      font-size: 14px; font-weight: 600; background: #fff; transition: all 0.25s; color: var(--ink);
     }
-    .size-group select:focus, .qty-input:focus, .qty-for-size:focus { border-color: var(--gold); outline: none; box-shadow: 0 0 0 3px rgba(198,161,91,0.18); }
-    .qty-control { display: flex; gap: 10px; align-items: center; margin-bottom: 14px; }
+    .bundle-size-row { display: flex; flex-wrap: wrap; gap: 14px; margin-bottom: 12px; }
+    .bundle-hint { font-size: 12.5px; color: var(--gold-deep); font-style: italic; margin-bottom: 14px; }
+    .bundle-size-field label { display: block; font-size: 12px; color: var(--forest); margin-bottom: 5px; font-weight: 700; }
+    .bundle-size-field select {
+      min-width: 150px; padding: 9px 10px; border: 1.5px solid #E7DFCB; border-radius: 9px;
+      font-family: 'Poppins', sans-serif; font-size: 13px; font-weight: 500; background: #fff; color: var(--ink);
+    }
+    .bundle-size-field select:focus, .size-group .qty-for-size:focus,
+    .qty-input:focus { border-color: var(--gold); outline: none; box-shadow: 0 0 0 3px rgba(198,161,91,0.18); }
+    .qty-control { display: flex; gap: 10px; align-items: center; margin-bottom: 14px; width: 150px; }
     .qty-btn {
       width: 38px; height: 38px; border: 1.5px solid var(--forest); background: #fff; cursor: pointer;
       border-radius: 9px; font-weight: 700; color: var(--forest); transition: all 0.25s; font-size: 18px;
@@ -134,11 +150,17 @@
     .qty-btn:hover { background: var(--forest); color: #fff; }
     .qty-display { flex: 1; text-align: center; font-size: 15px; font-weight: 700; color: var(--ink); }
     .add-btn {
-      width: 100%; padding: 12px; background: linear-gradient(135deg, var(--forest) 0%, var(--forest-deep) 100%);
+      display: inline-block; width: auto; padding: 12px 44px;
+      background: linear-gradient(135deg, var(--forest) 0%, var(--forest-deep) 100%);
       color: #fff; border: none; border-radius: 10px; cursor: pointer;
       font-family: 'Poppins', sans-serif; font-weight: 600; transition: all 0.25s; font-size: 14px; letter-spacing: 0.2px;
     }
     .add-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(46,93,58,0.35); }
+    @media (max-width: 640px) {
+      .product-card { flex-direction: column; }
+      .product-img { width: 100%; height: 200px; }
+      .add-btn { width: 100%; }
+    }
 
     /* ---------- Cart ---------- */
     .cart-card {
@@ -450,21 +472,49 @@
     let currentCategory = 'batch1';
     let appliedDiscount = null;
 
+    function findProduct(id) {
+      for (const cat in PRODUCTS) {
+        const found = PRODUCTS[cat].find(p => p.id === id);
+        if (found) return found;
+      }
+      return null;
+    }
+
     function createProductCard(p) {
       const card = document.createElement('div');
       card.className = 'product-card';
-      let sizeHtml = '';
-      let qtyPerSize = '';
-      if (p.sizes) {
-        qtyPerSize = `<div style="font-size:12px;color:#999;margin-bottom:8px;">Qty for each size</div>`;
-        p.sizes.forEach((size, idx) => {
-          sizeHtml += `<div class="size-group"><label class="size-label">${size}</label><input type="number" min="0" max="10" value="0" class="qty-for-size" data-size="${size}" data-product="${p.id}"></div>`;
-        });
-      } else {
-        qtyPerSize = `<div class="qty-control"><button class="qty-btn" onclick="adjustQty('${p.id}', -1)">−</button><div class="qty-display qty-for-product-${p.id}">0</div><button class="qty-btn" onclick="adjustQty('${p.id}', 1)">+</button></div>`;
-      }
       const imgUrl = PRODUCT_IMAGES[p.id] || 'https://via.placeholder.com/200?text=No+Image';
-      card.innerHTML = `<img src="${imgUrl}" alt="${p.name}" style="width: 100%; height: 160px; object-fit: cover; border-radius: 4px; margin-bottom: 12px;"><div class="product-type">${p.type}</div><div class="product-name">${p.name}</div><div class="product-price">₱${p.price}</div>${sizeHtml ? qtyPerSize + sizeHtml : qtyPerSize}<button class="add-btn" onclick="addToCart('${p.id}')">Add to Cart</button>`;
+      let controlsHtml = '';
+
+      if (p.sizes) {
+        // Solo item with sizes: quantity per size, laid out horizontally
+        const sizeInputs = p.sizes.map(size =>
+          `<div class="size-group"><label class="size-label">${size}</label><input type="number" min="0" max="10" value="0" class="qty-for-size" data-size="${size}" data-product="${p.id}"></div>`
+        ).join('');
+        controlsHtml = `<div class="size-hint">Quantity per size</div><div class="size-row">${sizeInputs}</div>`;
+      } else if (p.type === 'Bundle' && p.items) {
+        // Bundle: a size dropdown for each shirt/jersey inside it
+        let bundleFields = '';
+        p.items.forEach(it => {
+          const comp = findProduct(it.id);
+          if (comp && comp.sizes) {
+            const opts = comp.sizes.map(s => `<option value="${s}">${s}</option>`).join('');
+            bundleFields += `<div class="bundle-size-field"><label>${comp.name} — size</label><select class="bundle-size" data-product="${p.id}" data-component="${comp.name}"><option value="">Select size</option>${opts}</select></div>`;
+          }
+        });
+        if (bundleFields) {
+          // Sized bundle: pick sizes, add one set at a time (no quantity box)
+          controlsHtml = `<div class="bundle-size-row">${bundleFields}</div><div class="bundle-hint">Adds one bundle in the sizes you pick. Want another in different sizes? Just choose new sizes and add again.</div>`;
+        } else {
+          // Bundle with no sized items: simple quantity control
+          controlsHtml = `<div class="qty-control"><button class="qty-btn" onclick="adjustQty('${p.id}', -1)">−</button><div class="qty-display qty-for-product-${p.id}">0</div><button class="qty-btn" onclick="adjustQty('${p.id}', 1)">+</button></div>`;
+        }
+      } else {
+        // Simple item, no sizes
+        controlsHtml = `<div class="qty-control"><button class="qty-btn" onclick="adjustQty('${p.id}', -1)">−</button><div class="qty-display qty-for-product-${p.id}">0</div><button class="qty-btn" onclick="adjustQty('${p.id}', 1)">+</button></div>`;
+      }
+
+      card.innerHTML = `<img class="product-img" src="${imgUrl}" alt="${p.name}"><div class="product-info"><div class="product-type">${p.type}</div><div class="product-name">${p.name}</div><div class="product-price">₱${p.price}</div>${controlsHtml}<button class="add-btn" onclick="addToCart('${p.id}')">Add to Cart</button></div>`;
       return card;
     }
 
@@ -497,7 +547,7 @@
     }
 
     function addToCart(productId) {
-      const prod = PRODUCTS[currentCategory].find(p => p.id === productId);
+      const prod = findProduct(productId);
       if (!prod) return;
       if (prod.sizes) {
         const inputs = document.querySelectorAll(`input[data-product="${productId}"]`);
@@ -514,12 +564,28 @@
         if (totalQty === 0) { alert('Please select quantities'); return; }
         inputs.forEach(inp => inp.value = '0');
       } else {
-        const qty = parseInt(document.querySelector(`.qty-for-product-${productId}`).textContent);
-        if (qty <= 0) { alert('Please select quantity'); return; }
-        for (let i = 0; i < qty; i++) {
-          cart.push({ id: productId, name: prod.name, price: prod.price, type: prod.type });
+        const selects = document.querySelectorAll(`select.bundle-size[data-product="${productId}"]`);
+        if (prod.type === 'Bundle' && selects.length > 0) {
+          // Sized bundle: add exactly one set in the chosen sizes
+          const parts = [];
+          let missing = false;
+          selects.forEach(sel => {
+            if (!sel.value) missing = true;
+            else parts.push(`${sel.dataset.component}: ${sel.value}`);
+          });
+          if (missing) { alert('Please select a size for each shirt/jersey in this bundle'); return; }
+          cart.push({ id: productId, name: prod.name, price: prod.price, type: prod.type, sizes: parts.join(' · ') });
+          selects.forEach(s => s.value = '');
+        } else {
+          // Simple item or size-free bundle: use quantity control
+          const qtyEl = document.querySelector(`.qty-for-product-${productId}`);
+          const qty = qtyEl ? parseInt(qtyEl.textContent) : 0;
+          if (qty <= 0) { alert('Please select quantity'); return; }
+          for (let i = 0; i < qty; i++) {
+            cart.push({ id: productId, name: prod.name, price: prod.price, type: prod.type });
+          }
+          if (qtyEl) qtyEl.textContent = '0';
         }
-        document.querySelector(`.qty-for-product-${productId}`).textContent = '0';
       }
       updateCart();
     }
@@ -534,12 +600,12 @@
       }
       const grouped = {};
       cart.forEach((item, idx) => {
-        const key = item.id + (item.size || '');
+        const key = item.id + (item.size || '') + (item.sizes || '');
         if (!grouped[key]) grouped[key] = { ...item, qty: 0, indices: [] };
         grouped[key].qty++;
         grouped[key].indices.push(idx);
       });
-      items.innerHTML = Object.values(grouped).map((g, idx) => `<div class="cart-item"><button onclick="removeFromCart(${idx})" style="float:right;background:none;border:none;color:#999;cursor:pointer;font-size:14px;">✕</button><div class="cart-item-name">${g.name} x${g.qty}</div><div class="cart-item-detail">${g.size ? 'Size: ' + g.size : ''}</div><div style="margin-top:4px;color:#2E5D3A;font-weight:500;">₱${(g.price * g.qty).toLocaleString()}</div></div>`).join('');
+      items.innerHTML = Object.values(grouped).map((g, idx) => `<div class="cart-item"><button onclick="removeFromCart(${idx})" style="float:right;background:none;border:none;color:#999;cursor:pointer;font-size:14px;">✕</button><div class="cart-item-name">${g.name} x${g.qty}</div><div class="cart-item-detail">${g.sizes ? g.sizes : (g.size ? 'Size: ' + g.size : '')}</div><div style="margin-top:4px;color:#2E5D3A;font-weight:500;">₱${(g.price * g.qty).toLocaleString()}</div></div>`).join('');
       document.getElementById('checkoutBtn').disabled = false;
       updateTotals();
     }
@@ -547,7 +613,7 @@
     function removeFromCart(idx) {
       const grouped = {};
       cart.forEach((item, i) => {
-        const key = item.id + (item.size || '');
+        const key = item.id + (item.size || '') + (item.sizes || '');
         if (!grouped[key]) grouped[key] = { ...item, indices: [] };
         grouped[key].indices.push(i);
       });
@@ -614,11 +680,11 @@
       const items = document.getElementById('checkoutItems');
       const grouped = {};
       cart.forEach(item => {
-        const key = item.id + (item.size || '');
+        const key = item.id + (item.size || '') + (item.sizes || '');
         if (!grouped[key]) grouped[key] = { ...item, qty: 0 };
         grouped[key].qty++;
       });
-      items.innerHTML = Object.values(grouped).map(g => `<div class="order-item"><strong>${g.name}</strong> x${g.qty} ${g.size ? '(' + g.size + ')' : ''} — ₱${(g.price * g.qty).toLocaleString()}</div>`).join('');
+      items.innerHTML = Object.values(grouped).map(g => `<div class="order-item"><strong>${g.name}</strong> x${g.qty} ${g.sizes ? '(' + g.sizes + ')' : (g.size ? '(' + g.size + ')' : '')} — ₱${(g.price * g.qty).toLocaleString()}</div>`).join('');
       document.getElementById('checkoutModal').classList.add('show');
     }
 
