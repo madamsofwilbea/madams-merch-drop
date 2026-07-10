@@ -226,10 +226,13 @@
     .cart-item-detail { color: var(--ink-soft); font-size: 12px; margin-top: 4px; }
     .cart-total {
       background: linear-gradient(135deg, var(--forest) 0%, var(--forest-deep) 100%);
-      padding: 16px; border-radius: 12px; margin-bottom: 12px; color: #fff;
+      padding: 10px 16px; border-radius: 12px; margin-bottom: 9px; color: #fff;
     }
     .cart-total-label { font-size: 12px; color: rgba(255,255,255,0.9); font-weight: 600; letter-spacing: 0.3px; }
-    .cart-total-amount { font-size: 24px; font-weight: 700; color: #fff; margin-top: 6px; letter-spacing: -0.5px; }
+    .cart-total-amount { font-size: 18px; font-weight: 700; color: #fff; margin-top: 3px; letter-spacing: -0.5px; }
+    .cart-total-main { padding: 16px; margin-bottom: 12px; }
+    .cart-total-main .cart-total-label { font-size: 13px; }
+    .cart-total-main .cart-total-amount { font-size: 30px; margin-top: 6px; }
     .discount-section { margin-bottom: 28px; }
     .discount-input {
       width: 100%; padding: 12px; border: 1.5px solid #E7DFCB; border-radius: 9px;
@@ -395,16 +398,20 @@
           <div class="cart-total-label" style="color: #4d6b55;">Subtotal</div>
           <div class="cart-total-amount" style="color: #2E5D3A;" id="subtotal">₱0</div>
         </div>
+        <div class="cart-total" id="discountRow" style="background: #F5EAD0; display: none;">
+          <div class="cart-total-label" style="color: #8a6d1e;">Discount</div>
+          <div class="cart-total-amount" style="color: #8a6d1e;" id="discountAmount">−₱0</div>
+        </div>
         <div class="cart-total" style="background: #CFE3D4;">
           <div class="cart-total-label" style="color: #33604a;">Shipping</div>
           <div class="cart-total-amount" style="color: #2E5D3A;" id="shippingFee">₱0</div>
         </div>
-        <div class="cart-total">
+        <div class="cart-total cart-total-main">
           <div class="cart-total-label">Total</div>
           <div class="cart-total-amount" id="totalPrice">₱0</div>
         </div>
 
-        <button class="checkout-btn" id="checkoutBtn" onclick="goToCheckout()" disabled>🛒 Cart Them Up!</button>
+        <button class="checkout-btn" id="checkoutBtn" onclick="goToCheckout()" disabled>🛍️ Claim My Haul!</button>
       </div>
     </div>
   </div>
@@ -507,6 +514,12 @@
         <div class="donation-thanks">THANK YOU for your generosity! 💚</div>
       </div>
 
+      <div class="checkout-section">
+        <div class="checkout-section-title">Order Total</div>
+        <div style="font-size: 26px; font-weight: 700; color: #2E5D3A;" id="checkoutTotal">₱0</div>
+        <p style="font-size: 12px; color: #999; margin-top: 6px;">Send this exact amount via your chosen payment method below. 💚</p>
+      </div>
+
       <div class="qr-section">
         <div class="checkout-section-title">Payment Method</div>
         <select id="paymentMethod" onchange="updateQRDisplay()">
@@ -526,8 +539,6 @@
       </div>
 
       <div class="checkout-section">
-        <div class="checkout-section-title">Order Total</div>
-        <div style="font-size: 20px; font-weight: 600; color: #2E5D3A; margin-bottom: 16px;" id="checkoutTotal">₱0</div>
         <p style="font-size: 12px; color: #999; margin-bottom: 16px;">Once you've sent payment and uploaded your proof, just hit Place Order — that's it! We'll confirm with you shortly. 💚</p>
         <button id="completeOrderBtn" class="form-btn" onclick="placeOrder()" disabled>🛍️ Place Order</button>
         <div class="form-hint" id="formHint">Please fill in all required fields (marked <span class="req">*</span>) above to continue.</div>
@@ -642,7 +653,7 @@
         controlsHtml = `<div class="qty-control"><button class="qty-btn" onclick="adjustQty('${p.id}', -1)">−</button><div class="qty-display qty-for-product-${p.id}">0</div><button class="qty-btn" onclick="adjustQty('${p.id}', 1)">+</button></div>`;
       }
 
-      card.innerHTML = `<img class="product-img" src="${imgUrl}" alt="${p.name}"><div class="product-info"><div class="product-type">${p.type}</div><div class="product-name">${p.name}</div><div class="product-price">₱${p.price}</div>${controlsHtml}<button class="add-btn" onclick="addToCart('${p.id}')">Add to Cart</button></div>`;
+      card.innerHTML = `<img class="product-img" src="${imgUrl}" alt="${p.name}"><div class="product-info"><div class="product-type">${p.type}</div><div class="product-name">${p.name}</div><div class="product-price">₱${p.price}</div>${controlsHtml}<button class="add-btn" onclick="addToCart('${p.id}')">🛒 Add to Cart</button></div>`;
       return card;
     }
 
@@ -809,9 +820,20 @@
     function updateCheckoutTotals() {
       const subtotal = cart.reduce((s, item) => s + item.price, 0);
       let total = subtotal;
+      let discountValue = 0;
       if (appliedDiscount) {
-        if (appliedDiscount.type === 'flat') total -= appliedDiscount.value;
-        else total = Math.round(total * (1 - appliedDiscount.value / 100));
+        if (appliedDiscount.type === 'flat') discountValue = appliedDiscount.value;
+        else discountValue = Math.round(subtotal * (appliedDiscount.value / 100));
+        total -= discountValue;
+      }
+      const dRow = document.getElementById('discountRow');
+      if (dRow) {
+        if (appliedDiscount && discountValue > 0) {
+          dRow.style.display = 'block';
+          document.getElementById('discountAmount').textContent = '−₱' + discountValue.toLocaleString();
+        } else {
+          dRow.style.display = 'none';
+        }
       }
       const shipping = parseInt(document.getElementById('shippingFee').textContent.replace(/[₱,]/g, '')) || 0;
       total += shipping;
