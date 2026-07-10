@@ -299,6 +299,24 @@
     .checkout-content select:focus { border-color: var(--gold); outline: none; box-shadow: 0 0 0 3px rgba(198,161,91,0.18); }
     .req { color: #c0392b; margin-left: 2px; font-weight: 700; }
     .field-desc { font-size: 12px; color: var(--ink-soft); margin-bottom: 8px; font-style: italic; }
+    .disclaimer {
+      background: #FBF3DE; border: 1px solid rgba(198,161,91,0.45); border-left: 4px solid var(--gold);
+      border-radius: 8px; padding: 11px 14px; font-size: 12.5px; color: #7a5b1e; line-height: 1.55; margin-bottom: 14px;
+    }
+    .optional-tag { font-weight: 400; font-size: 12px; color: var(--ink-soft); font-style: italic; }
+    .vault-name {
+      font-family: 'Fraunces', Georgia, serif; font-weight: 700; font-style: normal;
+      color: var(--forest); font-size: 18px; letter-spacing: 0.3px;
+    }
+    .donation-row { display: flex; align-items: center; gap: 10px; }
+    .peso-prefix { font-size: 19px; font-weight: 700; color: var(--forest); }
+    .donation-input {
+      width: 130px; padding: 11px 12px; border: 1.5px solid #E7DFCB; border-radius: 9px;
+      font-family: 'Poppins', sans-serif; font-size: 15px; font-weight: 600; color: var(--ink); background: #fff;
+    }
+    .donation-input:focus { border-color: var(--gold); outline: none; box-shadow: 0 0 0 3px rgba(198,161,91,0.18); }
+    .donation-thanks { font-size: 13px; color: var(--gold-deep); font-weight: 600; opacity: 0; transition: opacity 0.3s; margin-top: 10px; }
+    .donation-thanks.show { opacity: 1; }
     .proof-input {
       width: 100%; padding: 11px; border: 1.5px dashed rgba(198,161,91,0.6); border-radius: 9px;
       font-family: 'Poppins', sans-serif; font-size: 13px; font-weight: 500; color: var(--ink);
@@ -316,6 +334,13 @@
     .form-btn:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 10px 24px rgba(46,93,58,0.35); }
     .form-btn:disabled { background: #d8d3c4; color: #8a8578; cursor: not-allowed; box-shadow: none; }
     .form-hint { font-size: 12px; color: #c0392b; text-align: center; margin-top: 10px; font-weight: 500; }
+    .back-btn {
+      display: block; margin: 14px auto 0; padding: 10px 26px;
+      background: transparent; color: var(--forest);
+      border: 1.5px solid var(--forest); border-radius: 50px; cursor: pointer;
+      font-family: 'Poppins', sans-serif; font-weight: 600; font-size: 13px; transition: all 0.25s;
+    }
+    .back-btn:hover { background: var(--forest); color: #fff; transform: translateY(-2px); box-shadow: 0 8px 20px rgba(46,93,58,0.25); }
     .cart-empty { color: var(--ink-soft); font-size: 14px; text-align: center; padding: 18px 6px; font-style: italic; }
 
     /* ---------- Accessibility & responsive ---------- */
@@ -440,7 +465,15 @@
         <div class="checkout-section">
           <div class="checkout-section-title">Notes for Pickup/Meetup<span class="req">*</span></div>
           <div class="field-desc">Key in details of your preferred pick-up: location, date, and time.</div>
+          <div class="disclaimer">👑 Please note: all pick-up details are subject to the approval and conditions of the Madams' Circle (Admins). Kindly keep your communication lines open so we can coordinate the final arrangements with you.</div>
           <textarea id="pickupNotes" class="notes-area" placeholder="e.g. SM North EDSA, Saturday July 19, around 2 PM"></textarea>
+        </div>
+      </div>
+
+      <div id="internationalSection" style="display: none;">
+        <div class="checkout-section">
+          <div class="checkout-section-title">International Shipping</div>
+          <div class="disclaimer">🌏 For international orders, we'll coordinate with you directly so you can choose your preferred courier. The shipping fee will be arranged and finalized separately. Kindly keep your communication lines open so we can sort out the details with you.</div>
         </div>
       </div>
 
@@ -462,6 +495,16 @@
           <label>Instagram or X Handle<span class="req">*</span></label>
           <input type="text" id="handle" placeholder="@yourhandle">
         </div>
+      </div>
+
+      <div class="checkout-section">
+        <div class="checkout-section-title">Got some spare to give? 💰 <span class="vault-name">→ The Madams' Vault</span></div>
+        <div class="field-desc">A continuous fund drive to support WilBea's future projects and fandom activities — every peso helps keep the community going! 💚 Chip in any amount you'd like, or skip it entirely. Totally up to you.</div>
+        <div class="donation-row">
+          <span class="peso-prefix">₱</span>
+          <input type="number" min="0" step="10" id="donationAmount" class="donation-input" placeholder="0" oninput="updateCheckoutTotals()">
+        </div>
+        <div class="donation-thanks">THANK YOU for your generosity! 💚</div>
       </div>
 
       <div class="qr-section">
@@ -488,7 +531,7 @@
         <p style="font-size: 12px; color: #999; margin-bottom: 16px;">Once you've sent payment and uploaded your proof, just hit Place Order — that's it! We'll confirm with you shortly. 💚</p>
         <button id="completeOrderBtn" class="form-btn" onclick="placeOrder()" disabled>🛍️ Place Order</button>
         <div class="form-hint" id="formHint">Please fill in all required fields (marked <span class="req">*</span>) above to continue.</div>
-        <button onclick="closeCheckout()" style="background: #ddd; color: #1F4128; margin-top: 8px;">Back to Store</button>
+        <button onclick="closeCheckout()" class="back-btn">← Back to Store</button>
       </div>
     </div>
   </div>
@@ -772,6 +815,10 @@
       }
       const shipping = parseInt(document.getElementById('shippingFee').textContent.replace(/[₱,]/g, '')) || 0;
       total += shipping;
+      const donation = Math.max(0, parseInt((document.getElementById('donationAmount')?.value) || '0') || 0);
+      total += donation;
+      const thanks = document.getElementById('donationAmount') ? document.querySelector('.donation-thanks') : null;
+      if (thanks) thanks.classList.toggle('show', donation > 0);
       document.getElementById('totalPrice').textContent = '₱' + Math.max(0, total).toLocaleString();
       document.getElementById('checkoutTotal').textContent = '₱' + Math.max(0, total).toLocaleString();
     }
@@ -782,6 +829,7 @@
       document.getElementById('shippingFee').textContent = '₱' + (shippingFees[method] || 0);
       document.getElementById('addressSection').style.display = (method && method !== 'pickup' && method !== 'international') ? 'block' : 'none';
       document.getElementById('notesSection').style.display = (method === 'pickup') ? 'block' : 'none';
+      document.getElementById('internationalSection').style.display = (method === 'international') ? 'block' : 'none';
       updateCheckoutTotals();
       validateCheckout();
     }
@@ -817,10 +865,13 @@
       const shippingFees = { pickup: 0, luzon: 150, visayas: 200, mindanao: 250, international: 0 };
       const shipping = shippingFees[method] || 0;
       total += shipping;
+      const donation = Math.max(0, parseInt((document.getElementById('donationAmount')?.value) || '0') || 0);
+      total += donation;
 
       let out = lines.join('\n') + '\n\nSubtotal: ₱' + subtotal.toLocaleString();
       if (discountLine) out += '\n' + discountLine;
       out += '\nShipping: ₱' + shipping.toLocaleString();
+      if (donation > 0) out += '\nDonation to Madams\' Vault: ₱' + donation.toLocaleString();
       out += '\nTOTAL: ₱' + Math.max(0, total).toLocaleString();
       return out;
     }
@@ -839,7 +890,8 @@
         delivery: deliveryLabels[dmethod] || dmethod, payment: paymentLabels[pmethod] || pmethod,
         addressLine: val('addressLine'), barangay: val('barangay'), city: val('city'),
         province: val('province'), zip: val('zipCode'), country: val('country'),
-        notes: val('pickupNotes'), total: (document.getElementById('checkoutTotal')?.textContent || '').trim()
+        notes: val('pickupNotes'), total: (document.getElementById('checkoutTotal')?.textContent || '').trim(),
+        donation: (function () { const d = Math.max(0, parseInt((document.getElementById('donationAmount')?.value) || '0') || 0); return d > 0 ? '₱' + d.toLocaleString() : ''; })()
       };
     }
 
@@ -919,8 +971,8 @@
       content.innerHTML =
         '<div style="text-align:center; padding:30px 12px;">' +
         '<div style="font-size:52px; margin-bottom:10px;">🎉</div>' +
-        '<h2 style="font-family:\'Fraunces\',serif; color:var(--forest); margin-bottom:12px;">Order received!</h2>' +
-        '<p style="color:var(--ink-soft); font-size:14px; line-height:1.65; margin-bottom:24px;">Salamat, fam! 💚 We\'ve got your order and your proof of payment. We\'ll reach out via your contact details to confirm. Kilig has no expiration date! 👑</p>' +
+        '<h2 style="font-family:\'Fraunces\',serif; color:var(--forest); margin-bottom:12px;">Yay, order placed!</h2>' +
+        '<p style="color:var(--ink-soft); font-size:14px; line-height:1.65; margin-bottom:24px;">THANK YOU for shopping from the drop, fam! 💚 Your order and proof of payment are in. The Madams\' Circle will message you shortly to confirm the details — watch your inbox and keep those comm lines open! 👑</p>' +
         '<button class="form-btn" onclick="location.reload()">Back to Store</button>' +
         '</div>';
     }
