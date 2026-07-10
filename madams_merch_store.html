@@ -286,13 +286,36 @@
       font-family: 'Poppins', sans-serif; font-size: 13px; font-weight: 500; transition: all 0.25s;
     }
     .shipping-field input:focus, .shipping-field select:focus { border-color: var(--gold); outline: none; box-shadow: 0 0 0 3px rgba(198,161,91,0.18); }
-    .notes-area { min-height: 100px; resize: vertical; font-family: 'Poppins', sans-serif; }
+    .notes-area { width: 100%; min-height: 90px; resize: vertical; padding: 12px; border: 1.5px solid #E7DFCB; border-radius: 9px; font-family: 'Poppins', sans-serif; font-size: 13px; font-weight: 500; color: var(--ink); transition: all 0.25s; }
+    .notes-area:focus { border-color: var(--gold); outline: none; box-shadow: 0 0 0 3px rgba(198,161,91,0.18); }
+    .checkout-content select {
+      width: 100%; padding: 12px 40px 12px 12px; border: 1.5px solid #E7DFCB; border-radius: 9px;
+      font-family: 'Poppins', sans-serif; font-size: 13px; font-weight: 500; color: var(--ink);
+      background-color: #fff; cursor: pointer; transition: all 0.25s;
+      -webkit-appearance: none; -moz-appearance: none; appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%232E5D3A' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+      background-repeat: no-repeat; background-position: right 14px center; background-size: 14px;
+    }
+    .checkout-content select:focus { border-color: var(--gold); outline: none; box-shadow: 0 0 0 3px rgba(198,161,91,0.18); }
+    .req { color: #c0392b; margin-left: 2px; font-weight: 700; }
+    .field-desc { font-size: 12px; color: var(--ink-soft); margin-bottom: 8px; font-style: italic; }
+    .proof-input {
+      width: 100%; padding: 11px; border: 1.5px dashed rgba(198,161,91,0.6); border-radius: 9px;
+      font-family: 'Poppins', sans-serif; font-size: 13px; font-weight: 500; color: var(--ink);
+      background: #fff; cursor: pointer;
+    }
+    .proof-input::file-selector-button {
+      font-family: 'Poppins', sans-serif; font-weight: 600; font-size: 12px; color: #fff;
+      background: var(--forest); border: none; border-radius: 7px; padding: 8px 14px; margin-right: 12px; cursor: pointer;
+    }
     .form-btn {
       display: block; text-align: center; text-decoration: none; width: 100%; padding: 15px;
       background: linear-gradient(135deg, var(--forest) 0%, var(--forest-deep) 100%); color: #fff; border: none;
       border-radius: 11px; cursor: pointer; font-family: 'Poppins', sans-serif; font-weight: 700; font-size: 15px; transition: all 0.28s;
     }
-    .form-btn:hover { transform: translateY(-2px); box-shadow: 0 10px 24px rgba(46,93,58,0.35); }
+    .form-btn:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 10px 24px rgba(46,93,58,0.35); }
+    .form-btn:disabled { background: #d8d3c4; color: #8a8578; cursor: not-allowed; box-shadow: none; }
+    .form-hint { font-size: 12px; color: #c0392b; text-align: center; margin-top: 10px; font-weight: 500; }
     .cart-empty { color: var(--ink-soft); font-size: 14px; text-align: center; padding: 18px 6px; font-style: italic; }
 
     /* ---------- Accessibility & responsive ---------- */
@@ -373,7 +396,7 @@
       </div>
 
       <div class="checkout-section">
-        <div class="checkout-section-title">Delivery Method</div>
+        <div class="checkout-section-title">Delivery Method<span class="req">*</span></div>
         <select id="deliveryMethod" onchange="updateDeliveryUI()">
           <option value="">Select delivery method</option>
           <option value="pickup">Pickup/Meetup (FREE)</option>
@@ -387,27 +410,27 @@
       <div id="addressSection" style="display: none;">
         <div class="shipping-section">
           <div class="shipping-field">
-            <label>Address Line</label>
+            <label>Address Line<span class="req">*</span></label>
             <input type="text" id="addressLine" placeholder="Street address">
           </div>
           <div class="shipping-field">
-            <label>Barangay</label>
+            <label>Barangay<span class="req">*</span></label>
             <input type="text" id="barangay" placeholder="Barangay">
           </div>
           <div class="shipping-field">
-            <label>City / Municipality</label>
+            <label>City / Municipality<span class="req">*</span></label>
             <input type="text" id="city" placeholder="City or municipality">
           </div>
           <div class="shipping-field">
-            <label>Province / Region</label>
+            <label>Province / Region<span class="req">*</span></label>
             <input type="text" id="province" placeholder="Province or region">
           </div>
           <div class="shipping-field">
-            <label>Zip Code</label>
+            <label>Zip Code<span class="req">*</span></label>
             <input type="text" id="zipCode" placeholder="Zip code">
           </div>
           <div class="shipping-field">
-            <label>Country</label>
+            <label>Country<span class="req">*</span></label>
             <input type="text" id="country" placeholder="Country" value="Philippines">
           </div>
         </div>
@@ -415,27 +438,28 @@
 
       <div id="notesSection" style="display: none;">
         <div class="checkout-section">
-          <div class="checkout-section-title">Notes for Pickup/Meetup</div>
-          <textarea id="pickupNotes" class="notes-area" placeholder="Any special instructions or preferred meetup location?"></textarea>
+          <div class="checkout-section-title">Notes for Pickup/Meetup<span class="req">*</span></div>
+          <div class="field-desc">Key in details of your preferred pick-up: location, date, and time.</div>
+          <textarea id="pickupNotes" class="notes-area" placeholder="e.g. SM North EDSA, Saturday July 19, around 2 PM"></textarea>
         </div>
       </div>
 
       <div class="checkout-section">
         <div class="checkout-section-title">Customer Information</div>
         <div class="shipping-field">
-          <label>Full Name</label>
+          <label>Full Name<span class="req">*</span></label>
           <input type="text" id="fullName" placeholder="Your full name">
         </div>
         <div class="shipping-field">
-          <label>Email</label>
+          <label>Email<span class="req">*</span></label>
           <input type="email" id="email" placeholder="your@email.com">
         </div>
         <div class="shipping-field">
-          <label>Mobile Number</label>
+          <label>Mobile Number<span class="req">*</span></label>
           <input type="tel" id="mobile" placeholder="09XX-XXX-XXXX">
         </div>
         <div class="shipping-field">
-          <label>Instagram or X Handle</label>
+          <label>Instagram or X Handle<span class="req">*</span></label>
           <input type="text" id="handle" placeholder="@yourhandle">
         </div>
       </div>
@@ -453,10 +477,17 @@
       </div>
 
       <div class="checkout-section">
+        <div class="checkout-section-title">Proof of Payment<span class="req">*</span></div>
+        <div class="field-desc">Upload a screenshot of your payment confirmation (JPG or PNG).</div>
+        <input type="file" id="proofFile" accept="image/*" class="proof-input">
+      </div>
+
+      <div class="checkout-section">
         <div class="checkout-section-title">Order Total</div>
         <div style="font-size: 20px; font-weight: 600; color: #2E5D3A; margin-bottom: 16px;" id="checkoutTotal">₱0</div>
-        <p style="font-size: 12px; color: #999; margin-bottom: 16px;">Once you've sent payment, fill out the Google Form below with your order details and proof of payment.</p>
-        <a href="https://docs.google.com/forms/d/e/1FAIpQLSchkoyiHowhKGIhCk6Fxcot7CsYGG9ixlqZYnClAQWUCkaxEw/viewform?usp=publish-editor" target="_blank" class="form-btn">Complete Order (Open Form)</a>
+        <p style="font-size: 12px; color: #999; margin-bottom: 16px;">Once you've sent payment and uploaded your proof, just hit Place Order — that's it! We'll confirm with you shortly. 💚</p>
+        <button id="completeOrderBtn" class="form-btn" onclick="placeOrder()" disabled>🛍️ Place Order</button>
+        <div class="form-hint" id="formHint">Please fill in all required fields (marked <span class="req">*</span>) above to continue.</div>
         <button onclick="closeCheckout()" style="background: #ddd; color: #1F4128; margin-top: 8px;">Back to Store</button>
       </div>
     </div>
@@ -752,6 +783,7 @@
       document.getElementById('addressSection').style.display = (method && method !== 'pickup' && method !== 'international') ? 'block' : 'none';
       document.getElementById('notesSection').style.display = (method === 'pickup') ? 'block' : 'none';
       updateCheckoutTotals();
+      validateCheckout();
     }
 
     function updateQRDisplay() {
@@ -759,6 +791,166 @@
       const qrLabels = { bpi: 'BPI QR Code', bdo: 'BDO QR Code', gcash: 'GCash QR Code' };
       document.getElementById('qrLabel').textContent = qrLabels[method] || '';
       document.getElementById('qrDisplay').innerHTML = QR_CODES[method] || '📸 [QR Code Image]';
+    }
+
+    function buildOrderSummary() {
+      const grouped = {};
+      cart.forEach(item => {
+        const key = item.id + (item.size || '') + (item.sizes || '');
+        if (!grouped[key]) grouped[key] = { ...item, qty: 0 };
+        grouped[key].qty++;
+      });
+      const lines = Object.values(grouped).map(g => {
+        const sz = g.sizes ? ' (' + g.sizes + ')' : (g.size ? ' (Size: ' + g.size + ')' : '');
+        return '• ' + g.name + ' x' + g.qty + sz + ' — ₱' + (g.price * g.qty).toLocaleString();
+      });
+      const subtotal = cart.reduce((s, i) => s + i.price, 0);
+      let total = subtotal, discountLine = '';
+      if (appliedDiscount) {
+        const discounted = appliedDiscount.type === 'flat'
+          ? subtotal - appliedDiscount.value
+          : Math.round(subtotal * (1 - appliedDiscount.value / 100));
+        discountLine = 'Discount: -₱' + (subtotal - discounted).toLocaleString();
+        total = discounted;
+      }
+      const method = document.getElementById('deliveryMethod').value;
+      const shippingFees = { pickup: 0, luzon: 150, visayas: 200, mindanao: 250, international: 0 };
+      const shipping = shippingFees[method] || 0;
+      total += shipping;
+
+      let out = lines.join('\n') + '\n\nSubtotal: ₱' + subtotal.toLocaleString();
+      if (discountLine) out += '\n' + discountLine;
+      out += '\nShipping: ₱' + shipping.toLocaleString();
+      out += '\nTOTAL: ₱' + Math.max(0, total).toLocaleString();
+      return out;
+    }
+
+    const SUBMIT_URL = "https://script.google.com/macros/s/AKfycbxDs2z3HQjyX1-rL1FujO94m3HiTCCVBZOkiYMUys5s6FHA-x8IsnmkWsyEh6l3vg13/exec";
+
+    function collectOrderData() {
+      const val = id => (document.getElementById(id)?.value || '').trim();
+      const deliveryLabels = { pickup: 'Pickup/Meetup', luzon: 'Luzon', visayas: 'Visayas', mindanao: 'Mindanao', international: 'International' };
+      const paymentLabels = { bpi: 'BPI', bdo: 'BDO', gcash: 'GCash' };
+      const dmethod = document.getElementById('deliveryMethod').value;
+      const pmethod = document.getElementById('paymentMethod').value;
+      return {
+        orders: buildOrderSummary(),
+        name: val('fullName'), email: val('email'), mobile: val('mobile'), handle: val('handle'),
+        delivery: deliveryLabels[dmethod] || dmethod, payment: paymentLabels[pmethod] || pmethod,
+        addressLine: val('addressLine'), barangay: val('barangay'), city: val('city'),
+        province: val('province'), zip: val('zipCode'), country: val('country'),
+        notes: val('pickupNotes'), total: (document.getElementById('checkoutTotal')?.textContent || '').trim()
+      };
+    }
+
+    function resizeImage(file, maxDim, quality) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = e => {
+          const img = new Image();
+          img.onload = () => {
+            let w = img.width, h = img.height;
+            if (w > maxDim || h > maxDim) {
+              if (w >= h) { h = Math.round(h * maxDim / w); w = maxDim; }
+              else { w = Math.round(w * maxDim / h); h = maxDim; }
+            }
+            const canvas = document.createElement('canvas');
+            canvas.width = w; canvas.height = h;
+            canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+            resolve(canvas.toDataURL('image/jpeg', quality));
+          };
+          img.onerror = reject;
+          img.src = e.target.result;
+        };
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+      });
+    }
+
+    function submitToSheet(data, done) {
+      let iframe = document.getElementById('submitFrame');
+      if (!iframe) {
+        iframe = document.createElement('iframe');
+        iframe.id = 'submitFrame'; iframe.name = 'submitFrame'; iframe.style.display = 'none';
+        iframe.src = 'about:blank';
+        document.body.appendChild(iframe);
+      }
+      const form = document.createElement('form');
+      form.method = 'POST'; form.action = SUBMIT_URL; form.target = 'submitFrame';
+      Object.keys(data).forEach(k => {
+        const inp = document.createElement('input');
+        inp.type = 'hidden'; inp.name = k; inp.value = (data[k] == null ? '' : data[k]);
+        form.appendChild(inp);
+      });
+      document.body.appendChild(form);
+      let finished = false;
+      const finish = () => { if (!finished) { finished = true; try { form.remove(); } catch (e) {} done(); } };
+      iframe.onload = finish;
+      setTimeout(finish, 12000); // optimistic fallback in case onload doesn't fire
+      form.submit();
+    }
+
+    function placeOrder() {
+      validateCheckout();
+      const btn = document.getElementById('completeOrderBtn');
+      if (btn.disabled) return;
+      const fileInput = document.getElementById('proofFile');
+      if (!fileInput.files || !fileInput.files[0]) { alert('Please upload your proof of payment.'); return; }
+
+      const origText = btn.textContent;
+      btn.disabled = true;
+      btn.textContent = 'Sending your order…';
+
+      resizeImage(fileInput.files[0], 1400, 0.82).then(dataUrl => {
+        const data = collectOrderData();
+        data.proof = dataUrl;
+        data.proofName = 'proof_' + Date.now() + '.jpg';
+        submitToSheet(data, showOrderSuccess);
+      }).catch(() => {
+        btn.disabled = false;
+        btn.textContent = origText;
+        alert('Something went wrong reading your image. Please try a different screenshot.');
+      });
+    }
+
+    function showOrderSuccess() {
+      cart = [];
+      const content = document.querySelector('.checkout-content');
+      content.innerHTML =
+        '<div style="text-align:center; padding:30px 12px;">' +
+        '<div style="font-size:52px; margin-bottom:10px;">🎉</div>' +
+        '<h2 style="font-family:\'Fraunces\',serif; color:var(--forest); margin-bottom:12px;">Order received!</h2>' +
+        '<p style="color:var(--ink-soft); font-size:14px; line-height:1.65; margin-bottom:24px;">Salamat, fam! 💚 We\'ve got your order and your proof of payment. We\'ll reach out via your contact details to confirm. Kilig has no expiration date! 👑</p>' +
+        '<button class="form-btn" onclick="location.reload()">Back to Store</button>' +
+        '</div>';
+    }
+
+    function validateCheckout() {
+      const btn = document.getElementById('completeOrderBtn');
+      const hint = document.getElementById('formHint');
+      if (!btn) return;
+      const val = id => (document.getElementById(id)?.value || '').trim();
+
+      const delivery = val('deliveryMethod');
+      const email = val('email');
+      const emailOK = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+      const custOK = val('fullName') && emailOK && val('mobile') && val('handle');
+
+      let addrOK = true;
+      const addrVisible = document.getElementById('addressSection').style.display !== 'none';
+      if (addrVisible) {
+        addrOK = ['addressLine','barangay','city','province','zipCode','country'].every(id => val(id));
+      }
+
+      let notesOK = true;
+      if (delivery === 'pickup') notesOK = !!val('pickupNotes');
+
+      const proofInput = document.getElementById('proofFile');
+      const proofOK = proofInput && proofInput.files && proofInput.files.length > 0;
+
+      const ok = delivery && custOK && addrOK && notesOK && proofOK;
+      btn.disabled = !ok;
+      hint.style.display = ok ? 'none' : 'block';
     }
 
     function goToCheckout() {
@@ -772,6 +964,7 @@
       });
       items.innerHTML = Object.values(grouped).map(g => `<div class="order-item"><strong>${g.name}</strong> x${g.qty} ${g.sizes ? '(' + g.sizes + ')' : (g.size ? '(' + g.size + ')' : '')} — ₱${(g.price * g.qty).toLocaleString()}</div>`).join('');
       document.getElementById('checkoutModal').classList.add('show');
+      validateCheckout();
     }
 
     function closeCheckout() {
@@ -788,6 +981,11 @@
         updateSuggestions();
         renderProducts();
       });
+    });
+
+    document.querySelectorAll('#checkoutModal input, #checkoutModal select, #checkoutModal textarea').forEach(el => {
+      el.addEventListener('input', validateCheckout);
+      el.addEventListener('change', validateCheckout);
     });
 
     buildFilterChips();
