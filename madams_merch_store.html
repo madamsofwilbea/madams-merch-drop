@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The Madams' Merch Drop - Madams of WilBea</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #E8F5E9; color: #1F4128; }
+    .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
+    .header { text-align: center; margin-bottom: 30px; padding: 30px 0; background: white; border-radius: 12px; }
+    .header h1 { font-size: 28px; margin-bottom: 10px; color: #2E5D3A; }
+    .header p { color: #666; font-size: 14px; }
+    .category-toggle { display: flex; gap: 12px; justify-content: center; margin-top: 20px; }
+    .cat-btn { padding: 10px 20px; border: 1px solid #2E5D3A; background: white; color: #2E5D3A; border-radius: 6px; cursor: pointer; font-weight: 500; transition: all 0.2s; }
+    .cat-btn.active { background: #2E5D3A; color: white; }
+    .main-content { display: grid; grid-template-columns: 1fr 320px; gap: 30px; }
+    .products-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 16px; }
+    .product-card { background: white; border: 1px solid #ddd; border-radius: 8px; padding: 16px; }
+    .product-type { font-size: 11px; text-transform: uppercase; color: #999; letter-spacing: 0.5px; margin-bottom: 8px; }
+    .product-name { font-size: 15px; font-weight: 500; color: #1F4128; margin-bottom: 8px; }
+    .product-price { font-size: 16px; font-weight: 600; color: #2E5D3A; margin-bottom: 12px; }
+    .size-group { margin-bottom: 12px; }
+    .size-label { font-size: 12px; color: #666; margin-bottom: 4px; display: block; }
+    .size-group select, .qty-input { width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px; font-size: 13px; margin-bottom: 8px; }
+    .qty-control { display: flex; gap: 8px; align-items: center; margin-bottom: 12px; }
+    .qty-btn { width: 32px; height: 32px; border: 1px solid #ddd; background: #f5f5f5; cursor: pointer; border-radius: 4px; font-weight: 600; color: #2E5D3A; }
+    .qty-btn:hover { background: #E8F5E9; }
+    .qty-display { flex: 1; text-align: center; font-size: 14px; font-weight: 500; }
+    .add-btn { width: 100%; padding: 10px; background: #2E5D3A; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: 500; }
+    .add-btn:hover { background: #1f4128; }
+    .cart-card { background: white; border: 1px solid #ddd; border-radius: 8px; padding: 16px; position: sticky; top: 20px; }
+    .cart-title { font-size: 16px; font-weight: 600; color: #2E5D3A; margin-bottom: 12px; }
+    .cart-items { max-height: 300px; overflow-y: auto; margin-bottom: 12px; }
+    .cart-item { padding: 8px 0; border-bottom: 1px solid #eee; font-size: 13px; }
+    .cart-item:last-child { border-bottom: none; }
+    .cart-item-name { font-weight: 500; color: #1F4128; }
+    .cart-item-detail { color: #999; font-size: 12px; margin-top: 2px; }
+    .cart-total { background: #E8F5E9; padding: 12px; border-radius: 4px; margin-bottom: 12px; }
+    .cart-total-label { font-size: 12px; color: #1f4128; }
+    .cart-total-amount { font-size: 20px; font-weight: 600; color: #2E5D3A; margin-top: 4px; }
+    .discount-section { margin-bottom: 16px; }
+    .discount-input { width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px; font-size: 12px; margin-bottom: 8px; }
+    .discount-btn { width: 100%; padding: 8px; background: #B8D4B8; color: #1f4128; border: none; border-radius: 4px; cursor: pointer; font-weight: 500; font-size: 12px; }
+    .discount-btn:hover { background: #9ac39a; }
+    .discount-msg { font-size: 12px; margin-top: 8px; padding: 8px; border-radius: 4px; text-align: center; }
+    .discount-success { background: #E8F5E9; color: #2E5D3A; }
+    .discount-error { background: #ffebee; color: #c62828; }
+    .checkout-btn { width: 100%; padding: 12px; background: #2E5D3A; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: 500; margin-bottom: 8px; }
+    .checkout-btn:hover { background: #1f4128; }
+    .checkout-btn:disabled { background: #ccc; cursor: not-allowed; }
+    .checkout-modal { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 1000; overflow-y: auto; }
+    .checkout-modal.show { display: block; }
+    .checkout-content { background: white; margin: 20px auto; padding: 30px; max-width: 700px; border-radius: 8px; }
+    .checkout-close { float: right; cursor: pointer; font-size: 24px; color: #999; background: none; border: none; }
+    .checkout-h2 { font-size: 20px; font-weight: 600; color: #2E5D3A; margin: 0 0 20px 0; clear: both; }
+    .checkout-section { margin-bottom: 24px; }
+    .checkout-section-title { font-size: 14px; font-weight: 600; color: #1F4128; margin-bottom: 12px; }
+    .order-item { font-size: 13px; color: #1F4128; margin-bottom: 8px; padding: 8px; background: #f5f5f5; border-radius: 4px; }
+    .qr-section { text-align: center; margin-bottom: 20px; }
+    .qr-section select { width: 100%; padding: 10px; margin-bottom: 16px; border: 1px solid #ddd; border-radius: 4px; }
+    .qr-display { min-height: 200px; display: flex; align-items: center; justify-content: center; background: #E8F5E9; border-radius: 4px; margin-bottom: 12px; }
+    .qr-display img { max-width: 100%; max-height: 300px; }
+    .qr-label { font-size: 12px; color: #2E5D3A; font-weight: 600; margin-bottom: 8px; }
+    .shipping-section { background: #f5f5f5; padding: 12px; border-radius: 4px; margin-bottom: 16px; }
+    .shipping-field { margin-bottom: 12px; }
+    .shipping-field label { display: block; font-size: 12px; font-weight: 500; color: #1F4128; margin-bottom: 4px; }
+    .shipping-field input, .shipping-field select { width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px; font-size: 13px; }
+    .notes-area { min-height: 80px; }
+    .form-btn { width: 100%; padding: 12px; background: #2E5D3A; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: 500; font-size: 14px; }
+    .form-btn:hover { background: #1f4128; }
+    .cart-empty { color: #999; font-size: 14px; }
+    @media (max-width: 900px) { .main-content { grid-template-columns: 1fr; } .cart-card { position: static; } }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>💎 The Madams' Merch Drop</h1>
+      <p>For the trentahin-and-above WilBea fam</p>
+      <div class="category-toggle">
+        <button class="cat-btn active" data-category="batch1">🛍️ Batch 1 Merch</button>
+        <button class="cat-btn" data-category="wr10">🎸 WR10 Concert Edition</button>
+      </div>
+    </div>
+
+    <div class="main-content">
+      <div class="products-grid" id="productsGrid"></div>
+
+      <div class="cart-card">
+        <div class="cart-title">Your Cart 💚</div>
+        <div id="cartItems" class="cart-items">
+          <div class="cart-empty">Your cart is empty</div>
+        </div>
+
+        <div class="discount-section">
+          <input type="text" class="discount-input" id="discountCode" placeholder="Discount code?">
+          <button class="discount-btn" onclick="applyDiscount()">Apply</button>
+          <div id="discountMsg"></div>
+        </div>
+
+        <div class="cart-total">
+          <div class="cart-total-label">Subtotal</div>
+          <div class="cart-total-amount" id="subtotal">₱0</div>
+        </div>
+        <div class="cart-total" style="background: #fff3e0;">
+          <div class="cart-total-label" style="color: #e65100;">Shipping</div>
+          <div class="cart-total-amount" style="color: #e65100;" id="shippingFee">₱0</div>
+        </div>
+        <div class="cart-total" style="background: #E8F5E9;">
+          <div class="cart-total-label" style="color: #2E5D3A;">Total</div>
+          <div class="cart-total-amount" id="totalPrice">₱0</div>
+        </div>
+
+        <button class="checkout-btn" id="checkoutBtn" onclick="goToCheckout()" disabled>Proceed to Checkout</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="checkout-modal" id="checkoutModal">
+    <div class="checkout-content">
+      <button class="checkout-close" onclick="closeCheckout()">&times;</button>
+
+      <div class="checkout-h2">Order Summary</div>
+
+      <div class="checkout-section">
+        <div class="checkout-section-title">Items</div>
+        <div id="checkoutItems"></div>
+      </div>
+
+      <div class="checkout-section">
+        <div class="checkout-section-title">Delivery Method</div>
+        <select id="deliveryMethod" onchange="updateDeliveryUI()">
+          <option value="">Select delivery method</option>
+          <option value="pickup">Pickup/Meetup (FREE)</option>
+          <option value="luzon">Luzon (₱150)</option>
+          <option value="visayas">Visayas (₱200)</option>
+          <option value="mindanao">Mindanao (₱250)</option>
+          <option value="international">International (Coordinate with us)</option>
+        </select>
+      </div>
+
+      <div id="addressSection" style="display: none;">
+        <div class="shipping-section">
+          <div class="shipping-field">
+            <label>Address Line</label>
+            <input type="text" id="addressLine" placeholder="Street address">
+          </div>
+          <div class="shipping-field">
+            <label>Barangay</label>
+            <input type="text" id="barangay" placeholder="Barangay">
+          </div>
+          <div class="shipping-field">
+            <label>City / Municipality</label>
+            <input type="text" id="city" placeholder="City or municipality">
+          </div>
+          <div class="shipping-field">
+            <label>Province / Region</label>
+            <input type="text" id="province" placeholder="Province or region">
+          </div>
+          <div class="shipping-field">
+            <label>Zip Code</label>
+            <input type="text" id="zipCode" placeholder="Zip code">
+          </div>
+          <div class="shipping-field">
+            <label>Country</label>
+            <input type="text" id="country" placeholder="Country" value="Philippines">
+          </div>
+        </div>
+      </div>
+
+      <div id="notesSection" style="display: none;">
+        <div class="checkout-section">
+          <div class="checkout-section-title">Notes for Pickup/Meetup</div>
+          <textarea id="pickupNotes" class="notes-area" placeholder="Any special instructions or preferred meetup location?"></textarea>
+        </div>
+      </div>
+
+      <div class="checkout-section">
+        <div class="checkout-section-title">Customer Information</div>
+        <div class="shipping-field">
+          <label>Full Name</label>
+          <input type="text" id="fullName" placeholder="Your full name">
+        </div>
+        <div class="shipping-field">
+          <label>Email</label>
+          <input type="email" id="email" placeholder="your@email.com">
+        </div>
+        <div class="shipping-field">
+          <label>Mobile Number</label>
+          <input type="tel" id="mobile" placeholder="09XX-XXX-XXXX">
+        </div>
+        <div class="shipping-field">
+          <label>Instagram or X Handle</label>
+          <input type="text" id="handle" placeholder="@yourhandle">
+        </div>
+      </div>
+
+      <div class="qr-section">
+        <div class="checkout-section-title">Payment Method</div>
+        <select id="paymentMethod" onchange="updateQRDisplay()">
+          <option value="">Select payment method</option>
+          <option value="bpi">BPI</option>
+          <option value="bdo">BDO</option>
+          <option value="gcash">GCash</option>
+        </select>
+        <div class="qr-label" id="qrLabel"></div>
+        <div class="qr-display" id="qrDisplay"></div>
+      </div>
+
+      <div class="checkout-section">
+        <div class="checkout-section-title">Order Total</div>
+        <div style="font-size: 20px; font-weight: 600; color: #2E5D3A; margin-bottom: 16px;" id="checkoutTotal">₱0</div>
+        <p style="font-size: 12px; color: #999; margin-bottom: 16px;">Once you've sent payment, fill out the Google Form below with your order details and proof of payment.</p>
+        <a href="https://docs.google.com/forms/d/e/1FAIpQLSchkoyiHowhKGIhCk6Fxcot7CsYGG9ixlqZYnClAQWUCkaxEw/viewform?usp=publish-editor" target="_blank" class="form-btn">Complete Order (Open Form)</a>
+        <button onclick="closeCheckout()" style="background: #ddd; color: #1F4128; margin-top: 8px;">Back to Store</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const PRODUCTS = {
+      batch1: [
+        { id: 'b1-shirt', name: 'Uga Battle Shirt', price: 550, type: 'T-Shirt', sizes: ['XS', 'S', 'M', 'L', 'XL', '2XL', '3XL'] },
+        { id: 'b1-beancat', name: 'Team Beancat Jersey', price: 650, type: 'Jersey', sizes: ['XXS', 'XS', 'S', 'M', 'L', 'XL', '2XL', '3XL'] },
+        { id: 'b1-wilbark', name: 'Team Wilbark Jersey', price: 650, type: 'Jersey', sizes: ['XXS', 'XS', 'S', 'M', 'L', 'XL', '2XL', '3XL'] },
+        { id: 'b1-bag', name: 'Uga Queen X Deleter King 2-Way Bag', price: 400, type: 'Bag' },
+        { id: 'b1-mug', name: 'Beancat x Wilbark Mug', price: 250, type: 'Mug' },
+        { id: 'b1-bundle1', name: 'Team Jersey Bundle', price: 1200, type: 'Bundle', items: [{ id: 'b1-beancat' }, { id: 'b1-wilbark' }] },
+        { id: 'b1-bundle2', name: 'Team Jersey x Battle Shirt', price: 1100, type: 'Bundle', items: [{ id: 'b1-beancat' }, { id: 'b1-wilbark' }, { id: 'b1-shirt' }] },
+        { id: 'b1-bundle3', name: 'Team Jersey x 2-Way Bag', price: 1000, type: 'Bundle', items: [{ id: 'b1-beancat' }, { id: 'b1-wilbark' }, { id: 'b1-bag' }] },
+        { id: 'b1-bundle4', name: 'Battle Shirt x 2-Way Bag', price: 850, type: 'Bundle', items: [{ id: 'b1-shirt' }, { id: 'b1-bag' }] },
+        { id: 'b1-bundle5', name: 'Team Jersey x Battle Shirt x Bag', price: 1500, type: 'Bundle', items: [{ id: 'b1-beancat' }, { id: 'b1-wilbark' }, { id: 'b1-shirt' }, { id: 'b1-bag' }] },
+        { id: 'b1-bundle6', name: '2 Team Jerseys x Battle Shirt x Bag', price: 2000, type: 'Bundle', items: [{ id: 'b1-beancat' }, { id: 'b1-wilbark' }, { id: 'b1-shirt' }, { id: 'b1-bag' }] }
+      ],
+      wr10: [
+        { id: 'wr-musika', name: 'Ang Aking Musika Tee', price: 550, type: 'T-Shirt', sizes: ['XS', 'S', 'M', 'L', 'XL', '2XL'] },
+        { id: 'wr-playlist', name: 'WR10 Playlist Tee', price: 550, type: 'T-Shirt', sizes: ['XS', 'S', 'M', 'L', 'XL', '2XL'] },
+        { id: 'wr-soundwave', name: 'WR Soundwave Drawstring', price: 400, type: 'Bag' },
+        { id: 'wr-bundle1', name: 'WR10 Premium Tee Set', price: 1000, type: 'Bundle', items: [{ id: 'wr-musika' }, { id: 'wr-playlist' }] },
+        { id: 'wr-bundle2', name: 'Ang Aking Musika Collector Set', price: 850, type: 'Bundle', items: [{ id: 'wr-musika' }, { id: 'wr-soundwave' }] },
+        { id: 'wr-bundle3', name: 'WR10 Playlist Collector Set', price: 850, type: 'Bundle', items: [{ id: 'wr-playlist' }, { id: 'wr-soundwave' }] },
+        { id: 'wr-bundle4', name: 'WR10 Concert Ultimate Collector Set', price: 1400, type: 'Bundle', items: [{ id: 'wr-musika' }, { id: 'wr-playlist' }, { id: 'wr-soundwave' }] }
+      ]
+    };
+
+    const DISCOUNT_CODES = {
+      'AdminsDCMadams2025!': { type: 'flat', value: 200 },
+      'W!LB3R+NiB35': { type: 'percent', value: 10 }
+    };
+
+    const PRODUCT_IMAGES = {
+      'b1-shirt': 'https://via.placeholder.com/200?text=Uga+Battle+Shirt',
+      'b1-beancat': 'https://via.placeholder.com/200?text=Team+Beancat',
+      'b1-wilbark': 'https://via.placeholder.com/200?text=Team+Wilbark',
+      'b1-bag': 'https://via.placeholder.com/200?text=2-Way+Bag',
+      'b1-mug': 'https://via.placeholder.com/200?text=Beancat+Mug',
+      'b1-bundle1': 'https://via.placeholder.com/200?text=Bundle+1',
+      'b1-bundle2': 'https://via.placeholder.com/200?text=Bundle+2',
+      'b1-bundle3': 'https://via.placeholder.com/200?text=Bundle+3',
+      'b1-bundle4': 'https://via.placeholder.com/200?text=Bundle+4',
+      'b1-bundle5': 'https://via.placeholder.com/200?text=Bundle+5',
+      'b1-bundle6': 'https://via.placeholder.com/200?text=Bundle+6',
+      'wr-musika': 'https://via.placeholder.com/200?text=Aking+Musika',
+      'wr-playlist': 'https://via.placeholder.com/200?text=Playlist+Tee',
+      'wr-soundwave': 'https://via.placeholder.com/200?text=Soundwave',
+      'wr-bundle1': 'https://via.placeholder.com/200?text=Tee+Set',
+      'wr-bundle2': 'https://via.placeholder.com/200?text=Musika+Set',
+      'wr-bundle3': 'https://via.placeholder.com/200?text=Playlist+Set',
+      'wr-bundle4': 'https://via.placeholder.com/200?text=Ultimate+Set'
+    };
+
+    const QR_CODES = {
+      bpi: '<img src="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wCEAA0KChUPFRYVFRYkGRoZJCUlHh4lJSkiJSQlIikpKyotLSorKSsoLjEuKCstLjU1Li0xMC0oMCUoMSYqMSj/2wBDARELDAgQFAwQFAwsJiAmMjI2MjIyMjI2MjIyMjIyMjI2NjY2NjIyMjI2NDI2MjIyMjIyMjYyMjI2MjIyMjIyMjIz/wAARCADIAMgDASIAAhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQAAAF9AQIDAAQRBRIhMUEGE1FhByJxFDKBkaEII0KxwRVS0fAkM2JyggkKFhcYGRolJicoKSo0NTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqDhIWGh4iJipKTlJWWm5ybnJ2eoqOkpaanqKmqsrO0tba2uLm6wsPExcbHyMnK0tPU1dbX2Nna4uPk5ebn6Onq8vP09fb3+Pn6/8QAHwEAAwEBAQEBAQAAAAAAAAECAwQFBgcICQoL/8QAtREAAgECBAQDBAcFBAQAAQJ3AAECAxEEBSExBhJBUQdhcRMiMoEIFEKRobHBCSMzUvAVYnLRChYkNOEl8RcYGRomJygpKjU2Nzg5OkNERUZHSElKU1RVVldYWWpzdHV2d3h5eoOEhYaHiImKkpOUlbaWmJmaoqOkpaanqKmqsrO0tba2uLm6wsPExcbHyMnK0tPU1dbX2Nna4uPk5ebn6Onq8vP09fb3+Pn6/9oADAMBAAIRAxEAPwD9/KKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigD/2Q==" alt="BPI QR" style="max-width: 100%;">',
+      bdo: '<img src="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/7QCEUGhvdG9zaG9wIDMuMAA4QklNBAQAAAAAAGgcAigAYkZCTUQwYTAwMGFmNjAxMDAwMGEyMTEwMDAwNWMyOTAwMDBjNzJhMDAwMGEwMmMwMDAwYjQ0ZjAwMDBlOTc0MDAwMDFlN2IwMDAwNjQ3YzAwMDA5MTdkMDAwMGIzYTQwMDAwYzg4NTAwMDBjMDQ4MDAwMGE4YjYwMDAwYTQ4YTAwMDBhMmJhMDAwMDk3OTEwMDAwOTAwYjAwMDA4MDMxMDAwMDc2YTQwMDAwNzQxMDAwMDZkYWEwMDAwNjgwMTAwMDA2MjdjMDAwMDU3ZTkwMDAwNTNhYzAwMDA0Yzk1MDAwMDQxNGMwMDAwMzYzNTAwMDAzMzI4MDAwMDJmYzIwMDAwMmRmMzAwMDAyZDY4MDAwMDJkMDkwMDAwMmNiODAwMDAyOTAzMDAwMDIzYmEwMDAwMjM2YzAwMDAyMzE2MDAwMDEwMDAwMDAwMA==" alt="BDO QR" style="max-width: 100%;">',
+      gcash: '<img src="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/7QCEUGhvdG9zaG9wIDMuMAA4QklNBAQAAAAAAGgcAigAYkZCTUQwYTAwMGEzYzAyMDAwMDBjZDcyMDAwMGI0ZjAwMDBlOTc0MDAwMDFlN2IwMDAwNjQ3YzAwMDA5MTdkMDAwMGIzYTQwMDAwYzg4NTAwMDBjMDQ4MDAwMGE4YjYwMDAwYTQ4YTAwMDBhMmJhMDAwMDk3OTEwMDAwOTAwYjAwMDA4MDMxMDAwMDc2YTQwMDAwNzQxMDAwMDZkYWEwMDAwNjgwMTAwMDA2MjdjMDAwMDU3ZTkwMDAwNTNhYzAwMDA0Yzk1MDAwMDQxNGMwMDAwMzYzNTAwMDAzMzI4MDAwMDJmYzIwMDAwMmRmMzAwMDAyZDY4MDAwMDJkMDkwMDAwMmNiODAwMDAyOTAzMDAwMDIzYmEwMDAwMjM2YzAwMDAyMzE2MDAwMDEwMDAwMDAwMA==" alt="GCash QR" style="max-width: 100%;">'
+    };
+
+    let cart = [];
+    let currentCategory = 'batch1';
+    let appliedDiscount = null;
+
+    function renderProducts() {
+      const grid = document.getElementById('productsGrid');
+      grid.innerHTML = '';
+      const prods = PRODUCTS[currentCategory];
+      prods.forEach(p => {
+        const card = document.createElement('div');
+        card.className = 'product-card';
+        let sizeHtml = '';
+        let qtyPerSize = '';
+        if (p.sizes) {
+          qtyPerSize = `<div style="font-size:12px;color:#999;margin-bottom:8px;">Qty for each size</div>`;
+          p.sizes.forEach((size, idx) => {
+            sizeHtml += `<div class="size-group"><label class="size-label">${size}</label><input type="number" min="0" max="10" value="0" class="qty-for-size" data-size="${size}" data-product="${p.id}"></div>`;
+          });
+        } else {
+          qtyPerSize = `<div class="qty-control"><button class="qty-btn" onclick="adjustQty('${p.id}', -1)">−</button><div class="qty-display qty-for-product-${p.id}">0</div><button class="qty-btn" onclick="adjustQty('${p.id}', 1)">+</button></div>`;
+        }
+        const imgUrl = PRODUCT_IMAGES[p.id] || 'https://via.placeholder.com/200?text=No+Image';
+        card.innerHTML = `<img src="${imgUrl}" alt="${p.name}" style="width: 100%; height: 160px; object-fit: cover; border-radius: 4px; margin-bottom: 12px;"><div class="product-type">${p.type}</div><div class="product-name">${p.name}</div><div class="product-price">₱${p.price}</div>${sizeHtml ? qtyPerSize + sizeHtml : qtyPerSize}<button class="add-btn" onclick="addToCart('${p.id}')">Add to Cart</button>`;
+        grid.appendChild(card);
+      });
+    }
+
+    function adjustQty(productId, delta) {
+      const el = document.querySelector(`.qty-for-product-${productId}`);
+      if (el) el.textContent = Math.max(0, parseInt(el.textContent) + delta);
+    }
+
+    function addToCart(productId) {
+      const prod = PRODUCTS[currentCategory].find(p => p.id === productId);
+      if (!prod) return;
+      if (prod.sizes) {
+        const inputs = document.querySelectorAll(`input[data-product="${productId}"]`);
+        let totalQty = 0;
+        inputs.forEach(inp => {
+          const qty = parseInt(inp.value);
+          if (qty > 0) {
+            for (let i = 0; i < qty; i++) {
+              cart.push({ id: productId, name: prod.name, price: prod.price, type: prod.type, size: inp.dataset.size });
+            }
+            totalQty += qty;
+          }
+        });
+        if (totalQty === 0) { alert('Please select quantities'); return; }
+        inputs.forEach(inp => inp.value = '0');
+      } else {
+        const qty = parseInt(document.querySelector(`.qty-for-product-${productId}`).textContent);
+        if (qty <= 0) { alert('Please select quantity'); return; }
+        for (let i = 0; i < qty; i++) {
+          cart.push({ id: productId, name: prod.name, price: prod.price, type: prod.type });
+        }
+        document.querySelector(`.qty-for-product-${productId}`).textContent = '0';
+      }
+      updateCart();
+    }
+
+    function updateCart() {
+      const items = document.getElementById('cartItems');
+      if (cart.length === 0) {
+        items.innerHTML = '<div class="cart-empty">Your cart is empty</div>';
+        document.getElementById('checkoutBtn').disabled = true;
+        updateTotals();
+        return;
+      }
+      const grouped = {};
+      cart.forEach((item, idx) => {
+        const key = item.id + (item.size || '');
+        if (!grouped[key]) grouped[key] = { ...item, qty: 0, indices: [] };
+        grouped[key].qty++;
+        grouped[key].indices.push(idx);
+      });
+      items.innerHTML = Object.values(grouped).map((g, idx) => `<div class="cart-item"><button onclick="removeFromCart(${idx})" style="float:right;background:none;border:none;color:#999;cursor:pointer;font-size:14px;">✕</button><div class="cart-item-name">${g.name} x${g.qty}</div><div class="cart-item-detail">${g.size ? 'Size: ' + g.size : ''}</div><div style="margin-top:4px;color:#2E5D3A;font-weight:500;">₱${(g.price * g.qty).toLocaleString()}</div></div>`).join('');
+      document.getElementById('checkoutBtn').disabled = false;
+      updateTotals();
+    }
+
+    function removeFromCart(idx) {
+      const grouped = {};
+      cart.forEach((item, i) => {
+        const key = item.id + (item.size || '');
+        if (!grouped[key]) grouped[key] = { ...item, indices: [] };
+        grouped[key].indices.push(i);
+      });
+      const keys = Object.keys(grouped);
+      const toRemove = grouped[keys[idx]].indices;
+      cart = cart.filter((_, i) => !toRemove.includes(i));
+      updateCart();
+    }
+
+    function updateTotals() {
+      const subtotal = cart.reduce((s, item) => s + item.price, 0);
+      document.getElementById('subtotal').textContent = '₱' + subtotal.toLocaleString();
+      updateCheckoutTotals();
+    }
+
+    function applyDiscount() {
+      const code = document.getElementById('discountCode').value;
+      const msg = document.getElementById('discountMsg');
+      if (!code) { msg.innerHTML = ''; return; }
+      if (DISCOUNT_CODES[code]) {
+        appliedDiscount = DISCOUNT_CODES[code];
+        msg.textContent = 'Discount applied!';
+        msg.className = 'discount-msg discount-success';
+        updateCheckoutTotals();
+      } else {
+        appliedDiscount = null;
+        msg.textContent = 'Expired or incorrect code';
+        msg.className = 'discount-msg discount-error';
+        updateCheckoutTotals();
+      }
+    }
+
+    function updateCheckoutTotals() {
+      const subtotal = cart.reduce((s, item) => s + item.price, 0);
+      let total = subtotal;
+      if (appliedDiscount) {
+        if (appliedDiscount.type === 'flat') total -= appliedDiscount.value;
+        else total = Math.round(total * (1 - appliedDiscount.value / 100));
+      }
+      const shipping = parseInt(document.getElementById('shippingFee').textContent.replace(/[₱,]/g, '')) || 0;
+      total += shipping;
+      document.getElementById('totalPrice').textContent = '₱' + Math.max(0, total).toLocaleString();
+      document.getElementById('checkoutTotal').textContent = '₱' + Math.max(0, total).toLocaleString();
+    }
+
+    function updateDeliveryUI() {
+      const method = document.getElementById('deliveryMethod').value;
+      const shippingFees = { pickup: 0, luzon: 150, visayas: 200, mindanao: 250, international: 0 };
+      document.getElementById('shippingFee').textContent = '₱' + (shippingFees[method] || 0);
+      document.getElementById('addressSection').style.display = (method && method !== 'pickup' && method !== 'international') ? 'block' : 'none';
+      document.getElementById('notesSection').style.display = (method === 'pickup') ? 'block' : 'none';
+      updateCheckoutTotals();
+    }
+
+    function updateQRDisplay() {
+      const method = document.getElementById('paymentMethod').value;
+      const qrLabels = { bpi: 'BPI QR Code', bdo: 'BDO QR Code', gcash: 'GCash QR Code' };
+      document.getElementById('qrLabel').textContent = qrLabels[method] || '';
+      document.getElementById('qrDisplay').innerHTML = QR_CODES[method] || '📸 [QR Code Image]';
+    }
+
+    function goToCheckout() {
+      if (cart.length === 0) { alert('Your cart is empty'); return; }
+      const items = document.getElementById('checkoutItems');
+      const grouped = {};
+      cart.forEach(item => {
+        const key = item.id + (item.size || '');
+        if (!grouped[key]) grouped[key] = { ...item, qty: 0 };
+        grouped[key].qty++;
+      });
+      items.innerHTML = Object.values(grouped).map(g => `<div class="order-item"><strong>${g.name}</strong> x${g.qty} ${g.size ? '(' + g.size + ')' : ''} — ₱${(g.price * g.qty).toLocaleString()}</div>`).join('');
+      document.getElementById('checkoutModal').classList.add('show');
+    }
+
+    function closeCheckout() {
+      document.getElementById('checkoutModal').classList.remove('show');
+    }
+
+    document.querySelectorAll('.cat-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        currentCategory = btn.dataset.category;
+        renderProducts();
+      });
+    });
+
+    renderProducts();
+  </script>
+</body>
+</html>
