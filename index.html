@@ -565,7 +565,6 @@
         <div class="checkout-section-title">Delivery Method<span class="req">*</span></div>
         <select id="deliveryMethod" onchange="updateDeliveryUI()">
           <option value="">Select delivery method</option>
-          <option value="pickup">Pickup/Meetup (FREE)</option>
           <option value="luzon">Luzon (₱150)</option>
           <option value="visayas">Visayas (₱200)</option>
           <option value="mindanao">Mindanao (₱250)</option>
@@ -643,10 +642,10 @@
         <div class="field-desc">A continuous fund drive to support WilBea's future projects and fandom activities — every peso helps keep the community going! 💚 Chip in any amount you'd like, or skip it entirely. Totally up to you.</div>
         <div class="donation-row">
           <span class="peso-prefix">₱</span>
-          <input type="number" min="0" step="50" id="donationAmount" class="donation-input" placeholder="0" oninput="updateCheckoutTotals(); validateCheckout()">
+          <input type="number" min="0" step="10" id="donationAmount" class="donation-input" placeholder="0" oninput="updateCheckoutTotals(); validateCheckout()">
         </div>
         <div class="donation-thanks">THANK YOU for your generosity! 💚</div>
-        <div class="donation-warn" id="donationWarn" style="display:none;font-size:12px;color:#b0791e;margin-top:6px;">Kindly make it a multiple of ₱50 — it keeps our accounting neat. Salamat, Fam! 💚</div>
+        <div class="donation-warn" id="donationWarn" style="display:none;font-size:12px;color:#b0791e;margin-top:6px;">Kindly make it a multiple of ₱10 — it keeps our accounting neat. Salamat, Fam! 💚</div>
       </div>
 
       <div class="checkout-section">
@@ -1289,9 +1288,9 @@
       const proofOK = proofInput && proofInput.files && proofInput.files.length > 0;
 
       const donation = parseInt(val('donationAmount')) || 0;
-      const donationOK = donation === 0 || donation % 50 === 0;
+      const donationOK = donation === 0 || donation % 10 === 0;
       const warn = document.getElementById('donationWarn');
-      if (warn) warn.style.display = (donation > 0 && donation % 50 !== 0) ? 'block' : 'none';
+      if (warn) warn.style.display = (donation > 0 && donation % 10 !== 0) ? 'block' : 'none';
 
       const ok = delivery && custOK && addrOK && notesOK && proofOK && donationOK;
       btn.disabled = !ok;
