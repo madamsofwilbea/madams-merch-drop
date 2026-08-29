@@ -578,6 +578,12 @@
         </select>
       </div>
 
+      <div class="checkout-section">
+        <div class="checkout-section-title">Additional Notes / Requests <span class="optional-tag">(optional)</span></div>
+        <div class="field-desc">Anything else we should know? If you’d like some items picked up and the rest delivered, tell us which is which and we’ll sort it out with you.</div>
+        <textarea id="orderRequests" class="notes-area" placeholder="e.g. I’d like to pick up the Bea-yond shirts and have the WR10 items delivered."></textarea>
+      </div>
+
       <div id="addressSection" style="display: none;">
         <div class="shipping-section">
           <div class="shipping-field">
@@ -1212,7 +1218,11 @@
         delivery: deliveryLabels[dmethod] || dmethod, payment: paymentLabels[pmethod] || pmethod,
         addressLine: val('addressLine'), barangay: val('barangay'), city: val('city'),
         province: val('province'), zip: val('zipCode'), country: val('country'),
-        notes: val('pickupNotes'), total: (document.getElementById('checkoutTotal')?.textContent || '').trim(),
+        notes: (function () {
+          const pick = (dmethod === 'pickup') ? val('pickupNotes') : '';
+          const req = val('orderRequests');
+          return [pick ? 'Pickup: ' + pick : '', req ? 'Request: ' + req : ''].filter(Boolean).join(' | ');
+        })(), total: (document.getElementById('checkoutTotal')?.textContent || '').trim(),
         donation: (function () { const d = Math.max(0, parseInt((document.getElementById('donationAmount')?.value) || '0') || 0); return d > 0 ? '₱' + d.toLocaleString() : ''; })()
       };
     }
