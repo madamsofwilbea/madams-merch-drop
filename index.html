@@ -381,6 +381,10 @@
       background: #FBF3DE; border: 1px solid rgba(198,161,91,0.45); border-left: 4px solid var(--gold);
       border-radius: 8px; padding: 11px 14px; font-size: 12.5px; color: #7a5b1e; line-height: 1.55; margin-bottom: 14px;
     }
+    .disclaimer-warn {
+      background: #FCEDED; border-color: rgba(217,140,140,0.55); border-left-color: var(--rose);
+      color: #8f3a3a;
+    }
     .optional-tag { font-weight: 400; font-size: 12px; color: var(--ink-soft); font-style: italic; }
     .vault-name {
       font-family: 'Fraunces', Georgia, serif; font-weight: 700; font-style: normal;
@@ -566,6 +570,7 @@
         <div class="checkout-section-title">Delivery Method<span class="req">*</span></div>
         <select id="deliveryMethod" onchange="updateDeliveryUI()">
           <option value="">Select delivery method</option>
+          <option value="pickup">Pickup / Meet-up (Free)</option>
           <option value="luzon">Luzon (₱150)</option>
           <option value="visayas">Visayas (₱200)</option>
           <option value="mindanao">Mindanao (₱250)</option>
@@ -605,6 +610,8 @@
       <div id="notesSection" style="display: none;">
         <div class="checkout-section">
           <div class="checkout-section-title">Notes for Pickup/Meetup<span class="req">*</span></div>
+          <div id="wr10PickupWarn" class="disclaimer disclaimer-warn" style="display: none;">⚠️ Heads up, Madam: your haul includes WR10 Concert merch, which is <strong>delivery only</strong>. Kindly choose a delivery option instead, or place a separate order for the items you want to pick up.</div>
+          <div class="disclaimer">🎸 Pick-up/meet-up is available for The First Drop and Bea-yond merch only. <strong>All WR10 Concert merch is for delivery only</strong> and cannot be picked up.</div>
           <div class="field-desc">Key in details of your preferred pick-up: location, date, and time.</div>
           <div class="disclaimer">👑 Please note: all pick-up details are subject to the approval and conditions of the Madams' Circle (Admins). Kindly keep your communication lines open so we can coordinate the final arrangements with you.</div>
           <textarea id="pickupNotes" class="notes-area" placeholder="e.g. SM North EDSA, Saturday July 19, around 2 PM"></textarea>
@@ -1119,12 +1126,18 @@
       updateCartDock();
     }
 
+    function cartHasWR10() {
+      const wrIds = PRODUCTS.wr10.map(p => p.id);
+      return cart.some(item => wrIds.indexOf(item.id) > -1);
+    }
+
     function updateDeliveryUI() {
       const method = document.getElementById('deliveryMethod').value;
       const shippingFees = { pickup: 0, luzon: 150, visayas: 200, mindanao: 250, international: 0 };
       document.getElementById('shippingFee').textContent = '₱' + (shippingFees[method] || 0);
       document.getElementById('addressSection').style.display = (method && method !== 'pickup' && method !== 'international') ? 'block' : 'none';
       document.getElementById('notesSection').style.display = (method === 'pickup') ? 'block' : 'none';
+      document.getElementById('wr10PickupWarn').style.display = (method === 'pickup' && cartHasWR10()) ? 'block' : 'none';
       document.getElementById('internationalSection').style.display = (method === 'international') ? 'block' : 'none';
       updateCheckoutTotals();
       validateCheckout();
