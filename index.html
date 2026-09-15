@@ -399,6 +399,25 @@
     .donation-input:focus { border-color: var(--gold); outline: none; box-shadow: 0 0 0 3px rgba(198,161,91,0.18); }
     .donation-thanks { font-size: 13px; color: var(--gold-deep); font-weight: 600; opacity: 0; transition: opacity 0.3s; margin-top: 10px; }
     .donation-thanks.show { opacity: 1; }
+    /* ---- Vault Tiers ---- */
+    .tiers { margin: 10px 0 14px; padding: 13px 14px; border-radius: 12px; background: linear-gradient(160deg, #F3F8F4 0%, #FFFFFF 100%); border: 1.5px solid #D3E4D6; }
+    .tiers-kicker { font-size: 10.5px; letter-spacing: 2.5px; text-transform: uppercase; font-weight: 700; color: var(--gold-deep); }
+    .tiers-period { font-size: 12px; color: var(--ink-soft); font-weight: 600; margin: 3px 0 10px; }
+    .tier-ladder { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
+    .tier { border-radius: 10px; padding: 9px 4px 8px; text-align: center; border: 1.5px solid #D3E4D6; background: #fff; }
+    .tier-name { font-family: 'Fraunces', Georgia, serif; font-weight: 700; font-size: 14px; }
+    .tier-amt { font-size: 11.5px; font-weight: 600; margin-top: 2px; color: var(--ink-soft); }
+    .tier.jade { border-color: #8FCBA3; } .tier.jade .tier-name { color: #3F8256; }
+    .tier.emerald { border-color: #A9CDB3; background: #EAF3EC; } .tier.emerald .tier-name { color: var(--forest); }
+    .tier.gold { border-color: var(--gold); background: #FBF4E4; } .tier.gold .tier-name { color: var(--gold-deep); }
+    .tier.crown { border-color: var(--gold); background: linear-gradient(135deg, var(--forest) 0%, var(--emerald-dark) 100%); }
+    .tier.crown .tier-name { color: var(--gold-soft); } .tier.crown .tier-amt { color: #CFE5D4; }
+    .tiers-fine { margin-top: 10px; font-size: 11.5px; color: var(--ink-soft); line-height: 1.5; }
+    #wallField { display: none; margin-top: 14px; }
+    #wallField label { display: block; font-size: 13px; font-weight: 600; color: var(--ink); margin-bottom: 6px; }
+    #wallField select { width: 100%; padding: 11px 12px; border: 1.5px solid #E7DFCB; border-radius: 9px; font-family: 'Poppins', sans-serif; font-size: 14px; font-weight: 500; background: #fff; }
+    .same-note { font-size: 12px; color: #8A6A1E; background: #FBF4E4; border: 1.5px solid #ECDDBB; border-radius: 9px; padding: 9px 11px; margin-top: 8px; line-height: 1.45; }
+    @media (max-width: 480px) { .tier-ladder { grid-template-columns: repeat(2, 1fr); } }
     .proof-input {
       width: 100%; padding: 11px; border: 1.5px dashed rgba(198,161,91,0.6); border-radius: 9px;
       font-family: 'Poppins', sans-serif; font-size: 13px; font-weight: 500; color: var(--ink);
@@ -654,12 +673,33 @@
       <div class="checkout-section">
         <div class="checkout-section-title">Got some spare to give? 💰 <span class="vault-name">→ The Madams' Vault</span></div>
         <div class="field-desc">A continuous fund drive to support WilBea's future projects and fandom activities — every peso helps keep the community going! 💚 Chip in any amount you'd like, or skip it entirely. Totally up to you.</div>
+        <div class="tiers">
+          <div class="tiers-kicker">The Madams' Vault Tiers</div>
+          <div class="tiers-period" id="tiersPeriod"></div>
+          <div class="tier-ladder">
+            <div class="tier jade"><div class="tier-name">Jade</div><div class="tier-amt">₱1,000</div></div>
+            <div class="tier emerald"><div class="tier-name">Emerald</div><div class="tier-amt">₱2,500</div></div>
+            <div class="tier gold"><div class="tier-name">Gold</div><div class="tier-amt">₱5,000</div></div>
+            <div class="tier crown"><div class="tier-name">Crown</div><div class="tier-amt">₱7,000+</div></div>
+          </div>
+          <div class="tiers-fine">Verified donations within a period add up — this one included. Reach a tier and hold it for the rest of the period, with perks announced monthly. Only the donation counts, not your merch.</div>
+        </div>
         <div class="donation-row">
           <span class="peso-prefix">₱</span>
           <input type="number" min="0" step="10" id="donationAmount" class="donation-input" placeholder="0" oninput="updateCheckoutTotals(); validateCheckout()">
         </div>
         <div class="donation-thanks">THANK YOU for your generosity! 💚</div>
         <div class="donation-warn" id="donationWarn" style="display:none;font-size:12px;color:#b0791e;margin-top:6px;">Kindly make it a multiple of ₱10 — it keeps our accounting neat. Salamat, Fam! 💚</div>
+        <div id="wallField">
+          <label>Show me on the Vault donor wall? <span class="req">*</span></label>
+          <select id="donorWall" onchange="validateCheckout()">
+            <option value="">Select</option>
+            <option value="Yes, with IG handle">Yes — with my IG handle</option>
+            <option value="Yes, initials only">Yes — initials only</option>
+            <option value="Anonymous">No — keep me anonymous</option>
+          </select>
+          <div class="same-note"><b>Your donation is tracked under the email and handle above.</b> Use the same ones you use on the Vault page so it adds up toward your tier.</div>
+        </div>
       </div>
 
       <div class="checkout-section">
@@ -1223,7 +1263,8 @@
           const req = val('orderRequests');
           return [pick ? 'Pickup: ' + pick : '', req ? 'Request: ' + req : ''].filter(Boolean).join(' | ');
         })(), total: (document.getElementById('checkoutTotal')?.textContent || '').trim(),
-        donation: (function () { const d = Math.max(0, parseInt((document.getElementById('donationAmount')?.value) || '0') || 0); return d > 0 ? '₱' + d.toLocaleString() : ''; })()
+        donation: (function () { const d = Math.max(0, parseInt((document.getElementById('donationAmount')?.value) || '0') || 0); return d > 0 ? '₱' + d.toLocaleString() : ''; })(),
+        wall: (function () { const d = Math.max(0, parseInt((document.getElementById('donationAmount')?.value) || '0') || 0); return d > 0 ? val('donorWall') : ''; })()
       };
     }
 
@@ -1309,6 +1350,19 @@
         '</div>';
     }
 
+    // ---- Vault Tiers: works out the current period from today's date (no manual edits per quarter) ----
+    function vaultPeriodLabel(d){
+      d = d || new Date();
+      var start = new Date(2026, 8, 15);                       // Sept 15, 2026 — Batch 1 begins
+      if (d < start) return 'Batch 1 · BER Months · starts Sept 15, 2026';
+      if (d.getFullYear() === 2026) return 'Batch 1 · BER Months · Sept 15 – Dec 31, 2026';
+      var q = Math.floor(d.getMonth() / 3), y = d.getFullYear();
+      var batch = (y - 2027) * 4 + q + 2;                      // Q1 2027 = Batch 2, Q2 2027 = Batch 3, ...
+      var ranges = ['Jan 1 – Mar 31', 'Apr 1 – Jun 30', 'Jul 1 – Sep 30', 'Oct 1 – Dec 31'];
+      return 'Batch ' + batch + ' · Q' + (q + 1) + ' ' + y + ' · ' + ranges[q] + ', ' + y;
+    }
+    (function(){ var el = document.getElementById('tiersPeriod'); if (el) el.textContent = vaultPeriodLabel(); })();
+
     function validateCheckout() {
       const btn = document.getElementById('completeOrderBtn');
       const hint = document.getElementById('formHint');
@@ -1333,7 +1387,9 @@
       const proofOK = proofInput && proofInput.files && proofInput.files.length > 0;
 
       const donation = parseInt(val('donationAmount')) || 0;
-      const donationOK = donation === 0 || donation % 10 === 0;
+      const wallField = document.getElementById('wallField');
+      if (wallField) wallField.style.display = donation > 0 ? 'block' : 'none';
+      const donationOK = (donation === 0 || donation % 10 === 0) && (donation === 0 || !!val('donorWall'));
       const warn = document.getElementById('donationWarn');
       if (warn) warn.style.display = (donation > 0 && donation % 10 !== 0) ? 'block' : 'none';
 
