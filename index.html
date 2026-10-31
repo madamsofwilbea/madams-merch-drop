@@ -601,7 +601,7 @@
       <div class="checkout-section">
         <div class="checkout-section-title">Additional Notes / Requests <span class="optional-tag">(optional)</span></div>
         <div class="field-desc">Anything else we should know? If you’d like some items picked up and the rest delivered, tell us which is which and we’ll sort it out with you.</div>
-        <textarea id="orderRequests" class="notes-area" placeholder="e.g. I’d like to pick up the Bea-yond shirts and have the WR10 items delivered."></textarea>
+        <textarea id="orderRequests" class="notes-area" placeholder="e.g. I’d like to pick up the Bea-yond shirts and have the rest delivered."></textarea>
       </div>
 
       <div id="addressSection" style="display: none;">
@@ -636,8 +636,7 @@
       <div id="notesSection" style="display: none;">
         <div class="checkout-section">
           <div class="checkout-section-title">Notes for Pickup/Meetup<span class="req">*</span></div>
-          <div id="wr10PickupWarn" class="disclaimer disclaimer-warn" style="display: none;">⚠️ Heads up, Madam: your haul includes WR10 Concert merch, which is <strong>delivery only</strong>. Kindly choose a delivery option instead, or place a separate order for the items you want to pick up.</div>
-          <div class="disclaimer">🎸 Pick-up/meet-up is available for The First Drop, Bea-yond, and Pee Mak merch only. <strong>All WR10 Concert merch is for delivery only</strong> and cannot be picked up.</div>
+          <div class="disclaimer">🎸 Pick-up/meet-up is now available for <strong>all merch</strong>, WR10 Concert items included.</div>
           <div class="field-desc">Key in details of your preferred pick-up: location, date, and time.</div>
           <div class="disclaimer">👑 Please note: all pick-up details are subject to the approval and conditions of the Madams' Circle (Admins). Kindly keep your communication lines open so we can coordinate the final arrangements with you.</div>
           <textarea id="pickupNotes" class="notes-area" placeholder="e.g. SM North EDSA, Saturday July 19, around 2 PM"></textarea>
@@ -1205,18 +1204,12 @@
       updateCartDock();
     }
 
-    function cartHasWR10() {
-      const wrIds = PRODUCTS.wr10.map(p => p.id);
-      return cart.some(item => wrIds.indexOf(item.id) > -1);
-    }
-
     function updateDeliveryUI() {
       const method = document.getElementById('deliveryMethod').value;
       const shippingFees = { pickup: 0, luzon: 150, visayas: 200, mindanao: 250, international: 0 };
       document.getElementById('shippingFee').textContent = '₱' + (shippingFees[method] || 0);
       document.getElementById('addressSection').style.display = (method && method !== 'pickup' && method !== 'international') ? 'block' : 'none';
       document.getElementById('notesSection').style.display = (method === 'pickup') ? 'block' : 'none';
-      document.getElementById('wr10PickupWarn').style.display = (method === 'pickup' && cartHasWR10()) ? 'block' : 'none';
       document.getElementById('internationalSection').style.display = (method === 'international') ? 'block' : 'none';
       updateCheckoutTotals();
       validateCheckout();
